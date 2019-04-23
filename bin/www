@@ -1,0 +1,19 @@
+/*
+ * @Author: zhoudaxiaa
+ * @Github: https://
+ * @Website: https://
+ * @Description: 运行
+ * @Version: 1.0
+ * @Date: 2018-11-21 13:24:34
+ * @LastEditors: zhoudaxiaa
+ * @LastEditTime: 2018-12-10 13:04:15
+ */
+
+const app = require('../server')
+const config = require('../config/index')
+
+const env = process.env.NODE_ENV === "production" ? config.dev : config.build
+
+app.listen(env.port, () => {
+  console.log(`服务器运行在${env.port}端口`)
+})

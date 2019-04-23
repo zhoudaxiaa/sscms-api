@@ -1,0 +1,40 @@
+{
+  "appenders": {
+    "response": {
+      "type": "dateFile",
+      "filename": "logs/res",
+      "pattern": "-yyyy-MM-dd.log",
+      "encoding": "utf-8",
+      "maxLogSize": 11024,
+      "alwaysIncludePattern": true
+    },
+    "error": {
+      "type": "dateFile",
+      "filename": "logs/err",
+      "pattern": "-yyyy-MM-dd.log",
+      "encoding": "utf-8",
+      "maxLogSize": 11024,
+      "alwaysIncludePattern": true
+    }
+  },
+  "categories": {
+    "default": {
+      "appenders": [
+        "response"
+      ],
+      "level": "info"
+    },
+    "response": {
+      "appenders": [
+        "response"
+      ],
+      "level": "info"
+    },
+    "error": {
+      "appenders": [
+        "error"
+      ],
+      "level": "error"
+    }
+  }
+}
