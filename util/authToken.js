@@ -6,15 +6,28 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-23 15:35:41
- * @LastEditTime: 2019-04-23 17:14:41
+ * @LastEditTime: 2019-04-26 13:02:00
  */
 const jwt = require('jsonwebtoken')
 
 const secret = 'JhhmsD2NS'
 
-module.exports = (ctx, next) => {
-  console.log(ctx.request.header.authorization)
-  let isLogin = jwt.verify(ctx.request.header.authorization, 'toke')
-  console.log(isLogin)
-  next()
+module.exports = async (ctx) => {
+  let token
+  try {
+    
+    let authorization = ctx.request.header.authorization
+
+    if (authorization) {
+      token = jwt.verify(authorization, secret)
+
+      return (token.role_id)
+    } else {
+      return Promise.reject({message: 'protected resources'})
+    }
+
+  } catch (err) {
+    return Promise.reject(err)
+  }
+
 }

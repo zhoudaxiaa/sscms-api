@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 10:34:07
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:04:37
+ * @LastEditTime: 2019-04-25 13:04:44
  */
 
 // 导入包
@@ -46,4 +46,4 @@ const CommentSchema = Schema(
 
 CommentSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
-exports.CommentM = mongoose.model('Comment', CommentSchema)
+exports.CommentM = mongoose.model('CommentM', CommentSchema)

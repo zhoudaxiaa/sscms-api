@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 10:00:19
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:04:29
+ * @LastEditTime: 2019-04-25 13:04:36
  */
 
 // 导入包
@@ -64,4 +64,4 @@ const ColumnSchema = Schema(
 // 格式化日期输出格式
 ColumnSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
-exports.ColumnM = mongoose.model('Column', ColumnSchema)
+exports.ColumnM = mongoose.model('ColumnM', ColumnSchema)

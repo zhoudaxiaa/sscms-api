@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 12:00:07
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-23 14:28:25
+ * @LastEditTime: 2019-04-25 13:44:16
  */
 
 // 导入包
@@ -16,8 +16,8 @@ const shortid = require('shortid')
 const moment = require('moment')
 
 // 导入关联表
-const Role = require('./AdminRole')
-const AdminMessage = require('./AdminMessage')
+const AdminRoleM = require('./AdminRole')
+const AdminMessageM = require('./AdminMessage')
 
 const AdminUserSchema = Schema(
   {
@@ -27,13 +27,12 @@ const AdminUserSchema = Schema(
     },
     name: String, // 管理员昵称
     avatar: String, // 头像
-    user_name: String, // 管理员帐号
-    pass_word: String, // 密码
+    username: String, // 管理员帐号
+    password: String, // 密码
     email: String, // 邮箱
     role_id: {
       // 角色组ID
       type: String,
-      ref: 'Role',
     },
     is_active: {
       // 是否启用
@@ -45,7 +44,7 @@ const AdminUserSchema = Schema(
       // 我的消息，关联 Message 表
       {
         type: String,
-        ref: 'AdminMessage',
+        ref: 'AdminMessageM',
       },
     ],
     ip_address: String, // 登录ip
@@ -59,4 +58,4 @@ const AdminUserSchema = Schema(
 
 AdminUserSchema.path('login_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
-exports.AdminUserM = mongoose.model('AdminUser', AdminUserSchema)
+exports.AdminUserM = mongoose.model('AdminUserM', AdminUserSchema)

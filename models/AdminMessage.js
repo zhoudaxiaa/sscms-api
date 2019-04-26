@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 15:39:35
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:02:58
+ * @LastEditTime: 2019-04-25 13:05:37
  */
 
 // 导入包
@@ -16,10 +16,10 @@ const shortid = require('shortid')
 const moment = require('moment')
 
 // 导入相关表
-const Comment = require('./Comment')
-const Column = require('./Column')
-const User = require('./User')
-const AdminUser = require('./AdminUser')
+const CommentM = require('./Comment')
+const ColumnM = require('./Column')
+const UserM = require('./User')
+const AdminUserM = require('./AdminUser')
 
 const AdminMessageSchema = Schema(
   {
@@ -36,17 +36,17 @@ const AdminMessageSchema = Schema(
     comment_id: {
       // 评论id， 关联 Comment 表
       type: String,
-      ref: 'Comment',
+      ref: 'CommentM',
     },
     admin_user_id: {
       // 管理员id， 关联 AdminUser 表
       type: String,
-      ref: 'AdminUser',
+      ref: 'AdminUserM',
     },
     column_id: {
       // 专栏id， 关联 Column 表
       type: String,
-      ref: 'Column',
+      ref: 'ColumnM',
     },
     is_read: {
       // 是否阅读
@@ -62,4 +62,4 @@ const AdminMessageSchema = Schema(
 
 AdminMessageSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
-exports.AdminMessageM = mongoose.model('AdminMessage', AdminMessageSchema)
+exports.AdminMessageM = mongoose.model('AdminMessageM', AdminMessageSchema)

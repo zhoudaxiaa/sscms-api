@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 11:32:19
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:04:25
+ * @LastEditTime: 2019-04-25 13:04:26
  */
 
 // 导入包
@@ -39,4 +39,4 @@ const CategorySchema = Schema(
   },
 )
 
-exports.CategoryM = mongoose.model('Category', CategorySchema)
+exports.CategoryM = mongoose.model('CategoryM', CategorySchema)

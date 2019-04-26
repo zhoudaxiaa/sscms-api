@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-05 16:49:11
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-23 14:45:56
+ * @LastEditTime: 2019-04-25 13:51:10
  */
 
 // 导入包
@@ -17,17 +17,17 @@ const moment = require('moment')
 const validate = require('mongoose-validator')
 
 // 导入关联表
-const AdminUser = require('./AdminUser')
-const Comment = require('./Comment')
-const Category = require('./Category')
-const Column = require('./Column')
-const Tag = require('./Tag')
+const AdminUserM = require('./AdminUser')
+const CommentM = require('./Comment')
+const CategoryM = require('./Category')
+const ColumnM = require('./Column')
+const TagM = require('./Tag')
 
 // 标题效验器
 const titleValidator = [
   validate({
     validator: 'isLength',
-    arguments: [2,10],
+    arguments: [2,30],
     message: 'Title should be between {ARGS[0]} and {ARGS[1]} characters'
   })
 ]
@@ -38,15 +38,15 @@ const ArticleSchema = Schema(
       type: String,
       default: shortid.generate,
     },
-    author: {
+    author_id: {
       type: String,
+      required: true
     },
     title: {
       type: String,
       validate: titleValidator
     },
-    type: {
-      // 文章类型， 0 为原创， 1 为转载
+    from: {  // 文章来源， 0 为原创， 1 为转载
       type: Number,
       default: 0,
     },
@@ -67,10 +67,10 @@ const ArticleSchema = Schema(
       type: Number,
       default: 0,
     },
-    comment_id: [  // 文章的评论
+    comment: [  // 文章的评论
       {
         type: String,
-        ref: 'Comment',
+        ref: 'CommentM',
       },
     ],
     comment_num: {  // 文章被评论的次数
@@ -81,17 +81,17 @@ const ArticleSchema = Schema(
       type: Number,
       default: 0,
     },
-    category_id: [  // 所属分类
+    category: [  // 所属分类
       {
         type: String,
-        ref: 'Category',
+        ref: 'CategoryM',
       },
     ],
-    column_id: {  // 所属专栏
+    column: {  // 所属专栏
       type: String,
-      ref: 'Column',
+      ref: 'ColumnM',
     },
-    tag_id: [  // 所属标签
+    tag: [  // 所属标签
       {
         type: String,
         ref: 'Tag',
@@ -111,15 +111,15 @@ const ArticleSchema = Schema(
   }
 )
 
-ArticleSchema.virtual('authorv', {
-  ref: 'AdminUser',
-  localField: 'author',
-  foreignField: 'id'
-})
-
-
 // 格式化时期输出
 ArticleSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 ArticleSchema.path('update_time').get(v => moment(v).format('YYYY-MM-DD'))
 
-exports.ArticleM = mongoose.model('Article', ArticleSchema)
+exports.ArticleM = mongoose.model('ArticleM', ArticleSchema)
+
+
+ArticleSchema.virtual('author', {
+  ref: 'AdminUserM',
+  localField: 'author_id',
+  foreignField: 'id'
+})

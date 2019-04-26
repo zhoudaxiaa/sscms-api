@@ -6,13 +6,15 @@
  * @Version: 1.0
  * @Date: 2018-12-10 11:09:25
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:03:00
+ * @LastEditTime: 2019-04-26 11:12:55
  */
 
 // 导入包
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const shortid = require('shortid')
+
+const moment = require('moment')
 
 const AdminResourceSchema = Schema(
   {
@@ -22,6 +24,7 @@ const AdminResourceSchema = Schema(
     },
     name: String, // 资源名称
     type: String, // 0 普通菜单， 1 功能菜单
+    api: String,  // 资源api路径，格式为，method + api，例：post/article
     route_path: String, // 路由路径
     component_path: String, // 模板路径
     icon: {
@@ -54,4 +57,4 @@ const AdminResourceSchema = Schema(
 // 格式化时期输出
 AdminResourceSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
-exports.AdminResourceM = mongoose.model('AdminResource', AdminResourceSchema)
+exports.AdminResourceM = mongoose.model('AdminResourceM', AdminResourceSchema)

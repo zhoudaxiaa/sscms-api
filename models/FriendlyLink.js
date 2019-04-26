@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 16:48:17
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:04:47
+ * @LastEditTime: 2019-04-25 13:05:04
  */
 
 // 导入包
@@ -34,4 +34,4 @@ const FriendlyLinkSchema = Schema(
   },
 )
 
-exports.FriendlyLinkM = mongoose.model('FriendlyLink', FriendlyLinkSchema)
+exports.FriendlyLinkM = mongoose.model('FriendlyLinkM', FriendlyLinkSchema)

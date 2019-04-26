@@ -6,16 +6,17 @@
  * @Version: 1.0
  * @Date: 2018-12-06 14:19:59
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:06:11
+ * @LastEditTime: 2019-04-25 16:33:03
  */
 
 // 导入包
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const shortid = require('shortid')
+const moment  = require('moment')
 
 // 导入关联表
-const AdminResource = require('./AdminResource')
+const AdminResourceM = require('./AdminResource')
 
 const AdminRoleSchema = Schema(
   {
@@ -28,7 +29,6 @@ const AdminRoleSchema = Schema(
       // 资源组ID
       {
         type: String,
-        ref: 'AdminResource',
       },
     ],
     introduce: String, // 介绍
@@ -43,4 +43,10 @@ const AdminRoleSchema = Schema(
 // 格式化时期输出
 AdminRoleSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
-exports.AdminRoleM= mongoose.model('AdminRole', AdminRoleSchema)
+exports.AdminRoleM= mongoose.model('AdminRoleM', AdminRoleSchema)
+
+AdminRoleSchema.virtual('resource', {
+  ref: 'AdminResourceM',
+  localField: 'resource_id',
+  foreignField: 'id'
+})

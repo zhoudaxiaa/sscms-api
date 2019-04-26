@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-07 12:57:29
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:04:42
+ * @LastEditTime: 2019-04-25 13:04:55
  */
 
 // 导入包
@@ -34,4 +34,4 @@ const DataOptionLogSchema = Schema(
 
 DataOptionLogSchema.path('date').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
-exports.DataOptionLogM = mongoose.model('DataOptionLog', DataOptionLogSchema)
+exports.DataOptionLogM = mongoose.model('DataOptionLogM', DataOptionLogSchema)
