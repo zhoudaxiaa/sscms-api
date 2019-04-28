@@ -2,27 +2,29 @@
  * @Author: zhoudaxiaa
  * @Github: https://
  * @Website: https://
- * @Description: 角色权限认证
+ * @Description: 角色权限认证中间件
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-25 16:01:36
- * @LastEditTime: 2019-04-26 16:06:51
+ * @LastEditTime: 2019-04-28 14:23:18
  */
 const { AdminRoleM } = require('../models/index')
 const { AdminResourceM } = require('../models/index')
 
-module.exports = async (ctx, id) => {
+module.exports = async (ctx, next) => {
+  let id = ctx.role_id
   let role
   let method
   let api
   let resource
+  let hasPermission = false
 
   try {
     role = await AdminRoleM.findOne({id}).populate({
       path: 'resource'
     }).exec()
   } catch (err) {
-    return Promise.reject('no permissions')
+    return Promise.reject({status: 401, code: '1001', message: 'no permissions'})
   }
 
   method = ctx.request.method.toLowerCase()  // http 方法转小写
@@ -36,9 +38,16 @@ module.exports = async (ctx, id) => {
     let resourceApi = resource[i].api  // 取得资源的api
     console.log(resourceApi)
     console.log(api)
-    if (resourceApi === api) return  // 如有该资源的权限return
+    if (resourceApi === api) {  // 如有该资源的权限return
+      hasPermission = true
+      break
+    }
   }
 
-  // 没有抛出错误
-  return Promise.reject('no permissions')
+  if (hasPermission) {
+    await next()
+  } else {
+    // 没有抛出错误
+    return Promise.reject({status: 401, code: '1001', message: 'no permissions'})
+  }
 }

@@ -6,14 +6,10 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-26 14:15:13
- * @LastEditTime: 2019-04-26 15:44:40
+ * @LastEditTime: 2019-04-28 12:53:54
  */
 
 const { AdminResourceM } = require('../../models/index')
-
-const authToken = require('../../util/authToken')
-const authPermission = require('../../util/authPermissions')
-const { reqThrowError } = require('../../util/throwError')
 
 class AdminResource {
 
@@ -22,8 +18,7 @@ class AdminResource {
     let result
     let reqData = ctx.request.body
     let data = {}
-    let role_id
-    
+
     data.name = reqData.name
     data.type = reqData.type
     data.api = reqData.api
@@ -35,27 +30,11 @@ class AdminResource {
     data.sort = reqData.sort
     data.introduce = reqData.introduce
 
-    // token鉴权
-    try {
-      role_id = await authToken(ctx)
-    } catch (err) {
-      reqThrowError(ctx, 401, 9999, err.message)
-      return
-    }
-
-    // 角色资源鉴权
-    try {
-      await authPermission(ctx, role_id)
-    } catch (err) {
-      reqThrowError(ctx, 401, 999, 'no permissions')
-      return
-    }
-
     try {
       result = await AdminResourceM.create(data)
       ctx.body = result
     } catch (err) {
-      reqThrowError(ctx, 400, 1006, err.message)
+      return Promise.reject({ status: 400, code: 1003, message: err.message })
     }
 
   }

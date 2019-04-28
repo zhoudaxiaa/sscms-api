@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-10 11:09:25
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-26 11:12:55
+ * @LastEditTime: 2019-04-28 14:57:17
  */
 
 // 导入包
@@ -31,9 +31,9 @@ const AdminResourceSchema = Schema(
       type: String, // icon 图标样式
       default: 'component'
     },
-    parent_id: {
+    pid: {
       type: String, // 父级菜单id
-      default: '0',
+      default: '',
     },
     is_active: {
       // 是否启用

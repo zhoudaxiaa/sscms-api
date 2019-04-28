@@ -2,17 +2,17 @@
  * @Author: zhoudaxiaa
  * @Github: https://
  * @Website: https://
- * @Description: token验证
+ * @Description: jwt 验证中间件
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
- * @Date: 2019-04-23 15:35:41
- * @LastEditTime: 2019-04-26 13:02:00
+ * @Date: 2019-04-28 10:11:46
+ * @LastEditTime: 2019-04-28 12:29:35
  */
 const jwt = require('jsonwebtoken')
 
 const secret = 'JhhmsD2NS'
 
-module.exports = async (ctx) => {
+module.exports = async (ctx, next) => {
   let token
   try {
     
@@ -20,10 +20,11 @@ module.exports = async (ctx) => {
 
     if (authorization) {
       token = jwt.verify(authorization, secret)
+      ctx.role_id = token.role_id
 
-      return (token.role_id)
+      await next ()
     } else {
-      return Promise.reject({message: 'protected resources'})
+      return Promise.reject({ status: 401, code: 1001, message: 'protected resources' })
     }
 
   } catch (err) {

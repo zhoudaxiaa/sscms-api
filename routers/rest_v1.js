@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-11-21 17:10:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-26 17:32:55
+ * @LastEditTime: 2019-04-28 14:03:01
  */
 
 const Router = require('koa-router')
@@ -16,9 +16,14 @@ const {
   AdminResourceC,
 } = require('../controller/index')('v1')
 
-const authToken = require('../util/authToken')
+const authToken = require('../middlewares/authToken')
+const authPermission = require('../middlewares/authPermission')
+const reqThrowError = require('../middlewares/reqThrowError')
 
 const router = new Router()
+
+// 处理错误并返回响应
+router.use(reqThrowError)
 
 /**
  * 管理员api
@@ -28,20 +33,23 @@ const router = new Router()
 router.post('/admin/login', AdminUserC.login)
 
 // 新增
-router.post('/admin', AdminUserC.add)
+router.post('/admin', authToken, authPermission, AdminUserC.add)
 
 // 删除
-router.delete('/admin/:id', AdminUserC.delete)
+router.delete('/admin/:id', authToken, authPermission, AdminUserC.delete)
 
 // 修改
-router.put('/resource', AdminUserC.put)
+router.put('/admin/:id', authToken, authPermission, AdminUserC.put)
+
+// 获取管理员
+router.get('/admin/', AdminUserC.get)
 
 /**
  * 管理员资源api
  */
 
 // 新增
-router.post('/resource', AdminResourceC.add)
+router.post('/resource', authToken, authPermission, AdminResourceC.add)
 
 
 /**
@@ -49,9 +57,9 @@ router.post('/resource', AdminResourceC.add)
  */
 
 // 新增
-router.post('/article', ArticleC.addArticle)
+router.post('/article', authToken, authPermission, ArticleC.add)
 
 // 获取所有文章信息
-router.get('/article', ArticleC.getArticle)
+router.get('/article', ArticleC.get)
 
 module.exports = router
