@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 14:19:59
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-25 16:33:03
+ * @LastEditTime: 2019-04-28 22:12:54
  */
 
 // 导入包
@@ -45,6 +45,7 @@ AdminRoleSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm
 
 exports.AdminRoleM= mongoose.model('AdminRoleM', AdminRoleSchema)
 
+// 虚拟值填充
 AdminRoleSchema.virtual('resource', {
   ref: 'AdminResourceM',
   localField: 'resource_id',

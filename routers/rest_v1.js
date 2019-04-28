@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-11-21 17:10:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-28 14:03:01
+ * @LastEditTime: 2019-04-28 22:17:36
  */
 
 const Router = require('koa-router')
@@ -14,6 +14,7 @@ const {
   ArticleC,
   AdminUserC,
   AdminResourceC,
+  CategoryC,
 } = require('../controller/index')('v1')
 
 const authToken = require('../middlewares/authToken')
@@ -41,8 +42,14 @@ router.delete('/admin/:id', authToken, authPermission, AdminUserC.delete)
 // 修改
 router.put('/admin/:id', authToken, authPermission, AdminUserC.put)
 
-// 获取管理员
-router.get('/admin/', AdminUserC.get)
+// 获取单个管理员
+router.get('/admin/:id', AdminUserC.getOne)
+
+// 获取部分管理员
+router.get('/admin', authToken, authPermission, AdminUserC.get)
+
+// 获取所有管理员
+router.get('/admin/all', authToken, authPermission, AdminUserC.getAll)
 
 /**
  * 管理员资源api
@@ -59,7 +66,12 @@ router.post('/resource', authToken, authPermission, AdminResourceC.add)
 // 新增
 router.post('/article', authToken, authPermission, ArticleC.add)
 
-// 获取所有文章信息
+// 获取文章
 router.get('/article', ArticleC.get)
+
+/**
+ * 分类api
+ */
+router.get('/category', CategoryC.get)
 
 module.exports = router

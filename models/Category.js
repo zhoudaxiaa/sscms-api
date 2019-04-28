@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 11:32:19
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-25 13:04:26
+ * @LastEditTime: 2019-04-28 20:34:30
  */
 
 // 导入包
@@ -16,7 +16,7 @@ const shortid = require('shortid')
 
 const CategorySchema = Schema(
   {
-    id: {
+    _id: {
       type: String,
       default: shortid.generate,
     },

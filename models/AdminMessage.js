@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 15:39:35
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-25 13:05:37
+ * @LastEditTime: 2019-04-28 22:13:14
  */
 
 // 导入包
@@ -53,13 +53,15 @@ const AdminMessageSchema = Schema(
       type: Boolean,
       default: false,
     },
-    publish_time: Number, // 发送时间
+    publish_time: {
+      type: Date,
+      default: Date.now(),
+      get: v =>  moment(v).format('YYYY-MM-DD HH:mm:ss')
+    }
   },
   {
     collection: 'AdminMessage',
   },
 )
-
-AdminMessageSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
 exports.AdminMessageM = mongoose.model('AdminMessageM', AdminMessageSchema)
