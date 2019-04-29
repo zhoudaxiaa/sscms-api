@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-05 16:49:11
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-25 13:51:10
+ * @LastEditTime: 2019-04-29 13:17:54
  */
 
 // 导入包
@@ -67,10 +67,9 @@ const ArticleSchema = Schema(
       type: Number,
       default: 0,
     },
-    comment: [  // 文章的评论
+    comment_id: [  // 文章的评论
       {
         type: String,
-        ref: 'CommentM',
       },
     ],
     comment_num: {  // 文章被评论的次数
@@ -81,45 +80,70 @@ const ArticleSchema = Schema(
       type: Number,
       default: 0,
     },
-    category: [  // 所属分类
+    category_id: [  // 所属分类
       {
         type: String,
-        ref: 'CategoryM',
       },
     ],
-    column: {  // 所属专栏
+    column_id: {  // 所属专栏
       type: String,
-      ref: 'ColumnM',
     },
-    tag: [  // 所属标签
+    tag_id: [  // 所属标签
       {
         type: String,
-        ref: 'Tag',
       },
     ],
-    publish_time: Number, // 发布时间
-    update_time: Number, // 更新时间
+    publish_time: {
+      type: Date,
+      default: Date.now(), // 发布时间
+      // 格式化时期输出
+      get: v => moment(v).format('YYYY-MM-DD HH:mm:ss')
+    },
+    update_time: {
+      type: Date,
+      default: Date.now(),  // 更新时间
+      // 格式化时期输出
+      get: (v) => moment(v).format('YYYY-MM-DD HH:mm:ss')
+    },
   },
   {
+    strict: true,
+    toJSON: {
+      setters: true,
+      getters: true,
+      virtuals: false,
+    },
+    toObject: {
+      virtuals: true,
+    },
     // 防止表名自动变复数
     collection: 'Article',
   },
-  {
-    toJSON: {
-      virtuals: true
-    }
-  }
+
 )
 
-// 格式化时期输出
-ArticleSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
-ArticleSchema.path('update_time').get(v => moment(v).format('YYYY-MM-DD'))
-
 exports.ArticleM = mongoose.model('ArticleM', ArticleSchema)
-
 
 ArticleSchema.virtual('author', {
   ref: 'AdminUserM',
   localField: 'author_id',
+  foreignField: 'id'
+})
+
+ArticleSchema.virtual('category', {
+  ref: 'CategoryM',
+  localField: 'category_id',
+  foreignField: 'id'
+})
+
+ArticleSchema.virtual('comment', {
+  ref: 'CommentM',
+  localField: 'comment_id',
+  foreignField: 'id'
+})
+
+ArticleSchema.virtual('tag', {
+  ref: 'TagM',
+  localField: 'tag_id',
   foreignField: 'id'
 })

@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 14:19:59
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-28 22:12:54
+ * @LastEditTime: 2019-04-29 12:44:13
  */
 
 // 导入包
@@ -32,22 +32,34 @@ const AdminRoleSchema = Schema(
       },
     ],
     introduce: String, // 介绍
-    publish_time: Number, // 发布时间
-  },
-  {
+    publish_time: {  // 发布时期
+      type: Date,
+      default: Date.now(),
+      // 格式化时期输出
+      get: v => moment(v).format('YYYY-MM-DD HH:mm:ss')
+    }
+  },{
+    strict: true,
+    toJSON: {
+      setters: true,
+      getters: true,
+      virtuals: false,
+    },
+    toObject: {
+      virtuals: true,
+    },
     // 防止表名自动变复数
     collection: 'AdminRole',
-  },
+  }
+  
 )
 
-// 格式化时期输出
-AdminRoleSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
-
-exports.AdminRoleM= mongoose.model('AdminRoleM', AdminRoleSchema)
+exports.AdminRoleM = mongoose.model('AdminRoleM', AdminRoleSchema)
 
 // 虚拟值填充
 AdminRoleSchema.virtual('resource', {
   ref: 'AdminResourceM',
   localField: 'resource_id',
-  foreignField: 'id'
+  foreignField: 'id',
+  // getters: true,
 })

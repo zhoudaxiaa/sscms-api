@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 15:39:35
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-28 22:13:14
+ * @LastEditTime: 2019-04-29 12:44:39
  */
 
 // 导入包
@@ -58,8 +58,16 @@ const AdminMessageSchema = Schema(
       default: Date.now(),
       get: v =>  moment(v).format('YYYY-MM-DD HH:mm:ss')
     }
-  },
-  {
+  },{
+    strict: true,
+    toJSON: {
+      setters: true,
+      getters: true,
+      virtuals: false,
+    },
+    toObject: {
+      virtuals: true,
+    },
     collection: 'AdminMessage',
   },
 )

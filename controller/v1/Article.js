@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-10 13:35:44
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-28 12:51:39
+ * @LastEditTime: 2019-04-29 15:33:38
  */
 
 // 导入关Model
@@ -39,10 +39,13 @@ class Article {
     let result
 
     try {
-      result = await ArticleM.findOne().populate([
+      result = await ArticleM.find().populate([
         {
           path: 'author',
-          select: 'name avatar id'
+          select: '-password'
+        },
+        {
+          path: 'category'
         }
       ]).exec()
       ctx.body = result

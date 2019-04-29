@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-25 16:01:36
- * @LastEditTime: 2019-04-28 14:23:18
+ * @LastEditTime: 2019-04-29 12:15:11
  */
 const { AdminRoleM } = require('../models/index')
 const { AdminResourceM } = require('../models/index')
@@ -30,8 +30,8 @@ module.exports = async (ctx, next) => {
   method = ctx.request.method.toLowerCase()  // http 方法转小写
   api = method + ctx.request.url.split('/').splice(0,3).join('/')  // 方法拼接请求的地址
 
-  // 取得角色资源，因为mongoose的未知原理，直接取值取不到，只能转下字符串在转回对象取值
-  resource = JSON.parse(JSON.stringify(role)).resource
+  // 需要先在AdminRoleM 里设置toObject: {virtuals: true,}
+  resource = role.toObject().resource
 
   // 遍历资源
   for (let i in resource) {

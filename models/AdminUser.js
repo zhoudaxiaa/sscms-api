@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 12:00:07
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-28 22:16:53
+ * @LastEditTime: 2019-04-29 14:34:52
  */
 
 // 导入包
@@ -23,7 +23,7 @@ const salt = 'm5NjIso1K'
 const AdminRoleM = require('./AdminRole')
 const AdminMessageM = require('./AdminMessage')
 
-const AdminUserSchema = new Schema(
+const AdminUserSchema = Schema(
   {
     id: {
       type: String,
@@ -68,17 +68,30 @@ const AdminUserSchema = new Schema(
     },
   },
   {
+    strict: true,
     toJSON: {
-      setter: true,
-      getters: true
+      setters: true,
+      getters: true,
+      virtuals: false,
     },
-    collection: 'AdminUser',  // 防止表名变复数
+    toObject: {
+      virtuals: true,
+    },
+    // 防止表名自动变复数
+    collection: 'AdminUser',
   },
 )
 
 exports.AdminUserM = mongoose.model('AdminUserM', AdminUserSchema)
 
 // 虚拟值填充
+AdminUserSchema.virtual('role', {
+  ref: 'AdminRoleM',
+  localField: 'role_id',
+  foreignField: 'id',
+  justOne: true,
+})
+
 AdminUserSchema.virtual('admin_message', {
   ref: 'AdminMessageM',
   localField: 'admin_message_id',

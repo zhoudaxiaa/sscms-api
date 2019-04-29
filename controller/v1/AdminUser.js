@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-23 16:14:02
- * @LastEditTime: 2019-04-28 22:26:31
+ * @LastEditTime: 2019-04-29 16:06:04
  */
 const { AdminUserM } = require('../../models/index')
 const jwt = require('jsonwebtoken')
@@ -133,7 +133,7 @@ class AdminUser {
     try {
       result = await AdminUserM.findOneAndUpdate({id}, data, {
         new: true,
-        select: 'id name avatar username email role_id is_active introduce login_time ip_address'
+        select: '-password'
       }).exec()
       
       ctx.body = result
@@ -150,9 +150,14 @@ class AdminUser {
     let id = params.id
 
     try {
-      result = await AdminUserM.findOne({id}).populate({
-        path: 'admin_message'
-      }).filter('id name avatar username email admin_message role_id is_active introduce login_time ip_address').exec()
+      result = await AdminUserM.findOne({id}).populate([
+        {
+          path: 'role'
+        },  
+        {
+          path: 'admin_message'
+        },
+      ]).exec()
 
       ctx.body = result
     } catch (err) {
@@ -171,7 +176,7 @@ class AdminUser {
     let total
 
     try {
-      result = AdminUserM.find().skip(start).limit(count).select('id name avatar username email role_id is_active introduce login_time ip_address').exec()
+      result = AdminUserM.find().skip(start).limit(count).populate('admin_message').select('-password').exec()
       total = AdminUserM.count()
 
       total = await total
@@ -179,7 +184,6 @@ class AdminUser {
 
       ctx.body = { start, count, total, list: result }
     } catch (err) {
-
       return Promise.reject({ status:400, code:1006, massage:err.message})      
     }
     
@@ -188,9 +192,9 @@ class AdminUser {
     // 获得所有
     async getAll (ctx) {
       let result
-  
+
       try {
-        result = await AdminUserM.find().select('id name avatar username email role_id is_active introduce login_time ip_address').exec()
+        result = await AdminUserM.find().populate('admin_message').select('-password').exec()
   
         ctx.body = result
       } catch (err) {
