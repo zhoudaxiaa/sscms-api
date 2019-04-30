@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-11-14 09:38:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-23 10:53:03
+ * @LastEditTime: 2019-04-30 11:26:30
  */
 
 const Koa = require('koa')
@@ -37,12 +37,13 @@ app.use(
     //   }
     //   return 'http://localhost:8080';
     // },
-    origin: config.clientUrl,
-    exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+    origin: '*',
+    // origin: config.clientUrl,
+    // exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
     maxAge: 5,
     credentials: true,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    // allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
   }),
 )
 

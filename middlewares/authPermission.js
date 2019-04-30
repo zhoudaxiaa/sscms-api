@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-25 16:01:36
- * @LastEditTime: 2019-04-29 12:15:11
+ * @LastEditTime: 2019-04-30 16:19:51
  */
 const { AdminRoleM } = require('../models/index')
 const { AdminResourceM } = require('../models/index')
@@ -20,9 +20,7 @@ module.exports = async (ctx, next) => {
   let hasPermission = false
 
   try {
-    role = await AdminRoleM.findOne({id}).populate({
-      path: 'resource'
-    }).exec()
+    role = await AdminRoleM.findOne({id}).populate('resource').exec()
   } catch (err) {
     return Promise.reject({status: 401, code: '1001', message: 'no permissions'})
   }
@@ -32,7 +30,7 @@ module.exports = async (ctx, next) => {
 
   // 需要先在AdminRoleM 里设置toObject: {virtuals: true,}
   resource = role.toObject().resource
-
+  
   // 遍历资源
   for (let i in resource) {
     let resourceApi = resource[i].api  // 取得资源的api

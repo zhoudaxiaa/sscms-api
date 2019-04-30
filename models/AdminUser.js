@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 12:00:07
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-29 14:34:52
+ * @LastEditTime: 2019-04-30 14:53:56
  */
 
 // 导入包
@@ -74,12 +74,13 @@ const AdminUserSchema = Schema(
       getters: true,
       virtuals: false,
     },
+    // 防止表名自动变复数
+    collection: 'AdminUser',
+  },{
     toObject: {
       virtuals: true,
     },
-    // 防止表名自动变复数
-    collection: 'AdminUser',
-  },
+  }
 )
 
 exports.AdminUserM = mongoose.model('AdminUserM', AdminUserSchema)

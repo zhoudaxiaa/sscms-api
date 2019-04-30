@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-11-21 17:10:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-29 16:52:54
+ * @LastEditTime: 2019-04-30 16:52:46
  */
 
 const Router = require('koa-router')
@@ -15,6 +15,7 @@ const {
   AdminUserC,
   AdminResourceC,
   CategoryC,
+  AdminRoleC,
 } = require('../controller/index')('v1')
 
 const authToken = require('../middlewares/authToken')
@@ -74,9 +75,27 @@ router.get('/article', ArticleC.get)
  */
 
 // 添加
-router.post('/category', CategoryC.add)
+router.post('/category', authToken, authPermission, CategoryC.add)
+
+// 删除
+router.delete('/category/:id', authToken, authPermission, CategoryC.delete)
 
 // 获取
 router.get('/category', CategoryC.get)
+
+/** 
+ * 角色api
+*/
+// 添加
+router.post('/role', authToken, authPermission, AdminRoleC.add)
+
+// 给角色添加资源
+router.post('/role/:id/resource', authToken, authPermission, AdminRoleC.addResource)
+
+// 删除
+router.delete('/role', authToken, authPermission, AdminRoleC.delete)
+
+// 获取
+router.get('/role', AdminRoleC.get)
 
 module.exports = router

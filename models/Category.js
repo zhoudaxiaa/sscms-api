@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 11:32:19
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-28 20:34:30
+ * @LastEditTime: 2019-04-30 14:55:24
  */
 
 // 导入包
@@ -16,18 +16,18 @@ const shortid = require('shortid')
 
 const CategorySchema = Schema(
   {
-    _id: {
+    id: {
       type: String,
       default: shortid.generate,
     },
     name: String, // 分类名
-    is_show: {
-      // 是否展示
+    is_show: {  // 是否展示
       type: Boolean,
       default: true,
     },
-    sort: {
-      // 排序
+    url: String,  // seo url
+    pid: String,
+    sort: {  // 排序
       type: Number,
       default: 0,
     },

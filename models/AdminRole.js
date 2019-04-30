@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 14:19:59
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-29 12:44:13
+ * @LastEditTime: 2019-04-30 14:49:51
  */
 
 // 导入包
@@ -45,11 +45,12 @@ const AdminRoleSchema = Schema(
       getters: true,
       virtuals: false,
     },
+    // 防止表名自动变复数
+    collection: 'AdminRole',
+  },{
     toObject: {
       virtuals: true,
     },
-    // 防止表名自动变复数
-    collection: 'AdminRole',
   }
   
 )

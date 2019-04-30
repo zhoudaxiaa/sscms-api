@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-05 16:49:11
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-29 13:17:54
+ * @LastEditTime: 2019-04-30 14:53:58
  */
 
 // 导入包
@@ -113,12 +113,13 @@ const ArticleSchema = Schema(
       getters: true,
       virtuals: false,
     },
+    // 防止表名自动变复数
+    collection: 'Article',
+  },{
     toObject: {
       virtuals: true,
     },
-    // 防止表名自动变复数
-    collection: 'Article',
-  },
+  }
 
 )
 

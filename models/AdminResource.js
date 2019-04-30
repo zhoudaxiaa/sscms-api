@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-10 11:09:25
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-28 20:36:52
+ * @LastEditTime: 2019-04-30 14:56:03
  */
 
 // 导入包
@@ -46,15 +46,27 @@ const AdminResourceSchema = Schema(
       default: 0,
     },
     introduce: String, // 介绍
-    publish_time: Number, // 发布时间
+    publish_time: {
+      type: Date,
+      default: Date.now(),
+      // 格式化时期输出
+      get: (v) => moment(v).format('YYYY-MM-DD HH:mm:ss'),
+    }
   },
   {
+    strict: true,
+    toJSON: {
+      setters: true,
+      getters: true,
+      virtuals: false,
+    },
     // 防止表名自动变复数
     collection: 'AdminResource',
-  },
+  },{
+    toObject: {
+      virtuals: true,
+    },
+  }
 )
-
-// 格式化时期输出
-AdminResourceSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
 exports.AdminResourceM = mongoose.model('AdminResourceM', AdminResourceSchema)

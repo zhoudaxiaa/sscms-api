@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 15:39:35
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-29 12:44:39
+ * @LastEditTime: 2019-04-30 14:56:19
  */
 
 // 导入包
@@ -65,11 +65,13 @@ const AdminMessageSchema = Schema(
       getters: true,
       virtuals: false,
     },
+
+    collection: 'AdminMessage',
+  }, {
     toObject: {
       virtuals: true,
     },
-    collection: 'AdminMessage',
-  },
+  }
 )
 
 exports.AdminMessageM = mongoose.model('AdminMessageM', AdminMessageSchema)
