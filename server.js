@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-11-14 09:38:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-30 11:26:30
+ * @LastEditTime: 2019-05-01 23:12:34
  */
 
 const Koa = require('koa')
@@ -26,34 +26,17 @@ const app = new Koa()
 config = process.env.NODE_NEV = 'production' ? config.build : config.dev
 
 // 使用 koa-onerror 捕捉错误
-onerror(app)
-
-// 使用 cors 解决跨域请求
-app.use(
-  cors({
-    // origin: function (ctx) {
-    //   if (ctx.url === '/v1') {
-    //       return "*"; // 允许来自所有域名请求
-    //   }
-    //   return 'http://localhost:8080';
-    // },
-    origin: '*',
-    // origin: config.clientUrl,
-    // exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
-    maxAge: 5,
-    credentials: true,
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-    // allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  }),
-)
-
-// get 数据处理中间件
-// app.use(json())
-
-// post 数据处理中间件
-app.use(koaBody({
-  multipart: true
-}))
+onerror(app, {
+  accepts() {
+    return 'json'
+  },
+  json(err, ctx) {
+    ctx.body = {
+      code: 9999,
+      msg: err.message
+    }
+  }
+})
 
 // 日志处理中间件
 app.use(async (ctx, next) => {
@@ -77,6 +60,33 @@ app.use(async (ctx, next) => {
     logUtil.errLogger(ctx, err, ms)
   }
 })
+
+// 使用 cors 解决跨域请求
+app.use(
+  cors({
+    // origin: function (ctx) {
+    //   if (ctx.url === '/v1') {
+    //       return "*"; // 允许来自所有域名请求
+    //   }
+    //   return 'http://localhost:8080';
+    // },
+    origin: '*',
+    // origin: config.clientUrl,
+    // exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+    maxAge: 5,
+    credentials: true,
+    allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    // allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  }),
+)
+
+// get 数据处理中间件
+// app.use(json())
+
+// post 数据处理中间件
+app.use(koaBody({
+  multipart: true
+}))
 
 // 使用路由
 app.use(router.routes())

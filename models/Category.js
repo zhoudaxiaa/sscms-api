@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 11:32:19
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-30 14:55:24
+ * @LastEditTime: 2019-05-03 22:31:33
  */
 
 // 导入包
@@ -20,18 +20,36 @@ const CategorySchema = Schema(
       type: String,
       default: shortid.generate,
     },
-    name: String, // 分类名
+    name: { // 分类名
+      type: String,
+      required: true,
+    },
     is_show: {  // 是否展示
       type: Boolean,
       default: true,
     },
-    url: String,  // seo url
-    pid: String,
+    url: {  // seo url
+      type: String,
+      required: true,
+    },
+    pid: {
+      type: String,
+      default: '',
+    },
     sort: {  // 排序
       type: Number,
       default: 0,
     },
-    introduce: String, // 分类说明
+    article_id: [
+      {
+        // 便签里的文章
+        type: String,
+      },
+    ],
+    introduce: { // 分类说明
+      type: String,
+      default: '',
+    },
   },
   {
     // 防止表名变复数

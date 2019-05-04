@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 10:34:07
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-25 13:04:44
+ * @LastEditTime: 2019-05-04 14:37:25
  */
 
 // 导入包
@@ -15,35 +15,59 @@ const Schema = mongoose.Schema
 const shortid = require('shortid')
 const moment = require('moment')
 
+const UserM = require('./User')
+
 const CommentSchema = Schema(
   {
     id: {
       type: String,
       default: shortid.generate,
     },
-    type: {
-      // 评论类型, 0 为评论， 1 为留言
-      type: Number,
-      default: 0,
+    author_id: {  // 评论人
+      type: String,
+      required: true,
     },
-    content: String, // 评论内容
+    content: { // 评论内容
+      type: String,
+      required: true,
+    },
     star_num: {
       // 点赞数
       type: Number,
       default: 0,
     },
-    parent_id: {
+    pid: {
       type: String, // 父评论id
       default: '0',
     },
-    publish_time: Number, // 评论日期
+    publish_time: {
+      type: Date,
+      default: Date.now(), // 发布时间
+      // 格式化时期输出
+      get: v => moment(v).format('YYYY-MM-DD HH:mm:ss')
+    },
   },
   {
+    strict: true,
+    toJSON: {
+      setters: true,
+      getters: true,
+      virtuals: false,
+    },
     // 防止表名自动变复数
     collection: 'Comment',
-  },
+  },{
+    toObject: {
+      virtuals: true,
+    },
+  }
 )
 
-CommentSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
-
 exports.CommentM = mongoose.model('CommentM', CommentSchema)
+
+CommentSchema.virtual('author', {
+  ref: 'UserM',
+  localField: 'author_id',
+  foreignField: 'id',
+})
+

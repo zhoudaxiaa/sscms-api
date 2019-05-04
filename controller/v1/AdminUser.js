@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-23 16:14:02
- * @LastEditTime: 2019-04-29 16:06:04
+ * @LastEditTime: 2019-05-04 22:03:23
  */
 const { AdminUserM } = require('../../models/index')
 const jwt = require('jsonwebtoken')
@@ -30,31 +30,42 @@ class AdminUser {
     let result
     let resData = ctx.request.body
     let data = {}
-    data.username = resData.username
-    data.password = resData.password
+    data.username = resData.username && resData.username.trim()
+    data.password = resData.password && resData.password.trim()
 
-    try {
-      result = await AdminUserM.findOneAndUpdate(data, {
-        login_time: new Date(),
-        ip_address: getUserIp(ctx)
-      }).exec()
+    if (!data.username || !data.password) {
+      return Promise.reject({
+        status: 200,
+        code: 2000,
+        message: 'username or password is empty'
+      })
+    }
 
+    result = await AdminUserM.findOneAndUpdate(data, {
+      login_time: new Date(),
+      ip_address: getUserIp(ctx)
+    })
+      .select('id name avatar role_id')
+      .exec()
+
+    if (result) {
       token = jwt.sign({
         username: data.username,
         role_id: result.role_id
-      }, secret, {expiresIn: '1h'})
-
+      }, secret, { expiresIn: '1d' })
+      
       ctx.body = {
-        id: result.id,
-        name: result.name,
-        avatar: result.avatar,
-        role_id: result.role_id,
-        token,
+        ...result.toObject(),  // query 返回的结果是一个复杂的对象，输出时都是隐式调用了toObject，这里使用扩展运算符，必须显示调用toObject
+        token
       }
-    } catch (err) {
-      console.log(err)
-      return Promise.reject({ status:400, code:1001, message:'username or password errer'})
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 2002,
+        message: 'username or password error'
+      })
     }
+
 
   }
 
@@ -62,32 +73,22 @@ class AdminUser {
   async add (ctx, next) {
     let result
     let resData = ctx.request.body
-    let data = {}
-
-    data.name = resData.name
-    data.avatar = resData.avatar
-    data.username = resData.username
-    data.password = resData.password
-    data.email= resData.email
-    data.role_id = resData.role_id
-    data.is_active = resData.is_active
-    data.introduce = resData.introduce
 
     try {
-      result = await AdminUserM.create(data)
-      ctx.body = {
-        id: result.id,
-        name: result.name,
-        avatar: result.avatar,
-        username: result.username,
-        email: result.email,
-        role_id: result.role_id,
-        is_active: result.is_active,
-        introduce: result.introduce,
-      }
+      result = await AdminUserM.create(resData)  // create 返回的是一个promise，无法使用query对象的select筛选
+
     } catch (err) {
-      return Promise.reject({ status:400, code:1006, massage:err.message})
+      return Promise.reject({
+        status: 200,
+        code: 1002,
+        message:err.message
+      })
     }
+
+    result = result.toObject()
+    delete result.password  // 去掉结果中的password 后输出
+    
+    ctx.body = result
     
   }
 
@@ -97,50 +98,186 @@ class AdminUser {
     let params = ctx.params
     let id = params.id
 
-    try {
-      result = await AdminUserM.findOneAndDelete({id}).exec()
+    result = await AdminUserM.findOneAndDelete({
+      id
+    })
+      .exec()
+
+    if (result) {
       ctx.body = {
-        msg: 'ok'
+        id: result.id
       }
-    } catch (err) {
-      return Promise.reject({ status:400, code:1006, massage:err.message})
+
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
     }
     
   }
 
-  // 修改
+  // 更新全部
   async put (ctx) {
     let result
     let resData = ctx.request.body
     let params = ctx.params
     let id = params.id
-    let data = {}
-
-    data.name = resData.name
-    data.avatar = resData.avatar
-    data.username = resData.username
-    data.email= resData.email
-    data.role_id = resData.role_id
-    data.is_active = resData.is_active
-    data.introduce = resData.introduce
-
-    // 密码有值时再插入
-    if (resData.password) {
-      data.password = resData.password
-    }
-    
 
     try {
-      result = await AdminUserM.findOneAndUpdate({id}, data, {
+      result = await AdminUserM.findOneAndUpdate({
+        id
+      }, resData, {
         new: true,
+        runValidators: true,
         select: '-password'
-      }).exec()
-      
-      ctx.body = result
+      })
+        .exec()
+
     } catch (err) {
-      return Promise.reject({ status:400, code:1006, massage:err.message})      
+      return Promise.reject({
+        status: 200,
+        code: 2001,
+        message: err.message
+      })      
+    }
+
+    if (result) {
+      ctx.body = result
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
     }
     
+  }
+
+  // 更新局部
+  async patch (ctx) {
+    let result
+    let resData = ctx.request.body
+    let params = ctx.params
+    let id = params.id
+
+    try {
+      result = await AdminUserM.findOneAndUpdate({
+        i
+      }, resData, {
+        new: true,
+        select: '-password',
+        runValidators: true,
+      })
+        .exec()
+      
+    } catch (err) {
+      return Promise.reject({
+        status: 200,
+        code: 2001,
+        message: err.message
+      })      
+    }
+
+    if (result) {
+      ctx.body = result
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
+    }
+    
+  }
+
+  // 获得所有
+  async getAll (ctx) {
+    let result
+    let query = ctx.query
+    let sortBy = query.sortBy || 'sort'
+
+    result = await AdminUserM.find()
+      .sort('sort')
+      .populate([
+        {
+          path: 'role'
+        },  
+        {
+          path: 'admin_message'
+        },
+      ])
+      .sort(sortBy)
+      .select('-password')
+      .exec()
+
+    ctx.body = result
+    
+  }
+
+  // 获取部分
+  async get (ctx) {
+    let result
+    let total
+    let query = ctx.query
+    let start = query.start || 0
+    let count = query.count || 10
+    let type = query.type
+    let value = query.value
+    let sortBy = query.sortBy || 'sort'
+
+    start = parseInt(start)
+    count = parseInt(count)
+
+    if (Number.isNaN(start) || Number.isNaN(count)) {
+      return Promise.reject({
+        status: 400,
+        code: 2003,
+        message: 'start or count must be number'
+      })      
+    }
+
+    // type 有值的时候 value 也必须有值
+    if (type && !value) {
+      return Promise.reject({
+        status: 400,
+        code: 2004,
+        message: 'if type exist, value must be exist too'
+      })
+    }
+
+    result = AdminUserM.find({
+      [type]: value,
+    })
+      .skip(start)
+      .limit(count)
+      .sort('sort')
+      .populate([
+        {
+          path: 'role'
+        },  
+        {
+          path: 'admin_message'
+        },
+      ])
+      .select('-password')
+      .exec()
+
+    total = AdminUserM.countDocuments({
+      [type]: value,
+    })
+
+    total = await total
+    result = await  result
+    
+    ctx.body = {
+      start,
+      count,
+      total,
+      list: result
+    }
+
   }
 
   // 获取单个用户
@@ -149,60 +286,31 @@ class AdminUser {
     let params = ctx.params
     let id = params.id
 
-    try {
-      result = await AdminUserM.findOne({id}).populate([
+    result = await AdminUserM.findOne({
+      id
+    })
+      .populate([
         {
           path: 'role'
         },  
         {
           path: 'admin_message'
         },
-      ]).exec()
+      ])
+      .select('-password')
+      .exec()
 
+    if (result) {
       ctx.body = result
-    } catch (err) {
-
-      return Promise.reject({ status:400, code:1006, massage:err.message})      
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
     }
     
   }
-
-  // 获取部分
-  async get (ctx) {
-    let result
-    let query = ctx.query
-    let start = query.start || 0
-    let count = query.count || 10
-    let total
-
-    try {
-      result = AdminUserM.find().skip(start).limit(count).populate('admin_message').select('-password').exec()
-      total = AdminUserM.count()
-
-      total = await total
-      result = await  result
-
-      ctx.body = { start, count, total, list: result }
-    } catch (err) {
-      return Promise.reject({ status:400, code:1006, massage:err.message})      
-    }
-    
-  }
-
-    // 获得所有
-    async getAll (ctx) {
-      let result
-
-      try {
-        result = await AdminUserM.find().populate('admin_message').select('-password').exec()
-  
-        ctx.body = result
-      } catch (err) {
-        console.log(err)
-        return Promise.reject({ status:400, code:1006, massage:err.message})      
-      }
-      
-    }
 
 }
 

@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-30 12:39:56
- * @LastEditTime: 2019-04-30 16:43:34
+ * @LastEditTime: 2019-05-04 23:20:14
  */
 const { AdminRoleM } = require('../../models/index')
 
@@ -15,45 +15,20 @@ class AdminRole {
   // 增加
   async add (ctx, next) {
     let result
-    let reqData = ctx.request.body
-    let data = {}
-
-    data.name = reqData.name
-    data.introduce = reqData.introduce
+    let resData = ctx.request.body
 
     try {
-      result = await AdminResourceM.create(data)
-      ctx.body = result
+      result = await AdminRoleM.create(resData)
+
     } catch (err) {
-      return Promise.reject({ status: 400, code: 1003, message: err.message })
+      return Promise.reject({
+        status: 200,
+        code: 2001,
+        message: err.message
+      })
     }
 
-  }
-
-  // 给角色添加资源
-  async addResource (ctx, next) {
-    let result
-    let params = ctx.params
-    let id = params.id
-    let reqData = ctx.request.body
-    let data = {}
-
-    if (!reqData.resource_id instanceof String) {
-      ctx.body = {
-        code: 1005,
-        msg: 'resource_id must be string'
-      }
-      return
-    }
-
-    data.resource_id = JSON.parse(reqData.resource_id)
-
-    try {
-      result = await AdminRoleM.findOneAndUpdate({id}, data, { new: true, }).exec()
-      ctx.body = result
-    } catch (err) {
-      return Promise.reject({ status: 400, code: 1003, message: err.message })
-    }
+    ctx.body = result
 
   }
 
@@ -63,28 +38,324 @@ class AdminRole {
     let params = ctx.params
     let id = params.id
 
-    try {
-      result = await AdminRoleM.findOneAndDelete({id}).exec()
+    result = await AdminRoleM.findOneAndDelete({
+      id
+    }).exec()
+
+    if (result) {
       ctx.body = {
-        msg: 'ok'
+        id: result.id
       }
-    } catch (err) {
-      return Promise.reject({ status:400, code:1006, massage:err.message })
+
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
     }
     
   }
 
-  // 获取
-  async get (ctx, next) {
+  // 更新全部
+  async put (ctx, next) {
     let result
+    let resData = ctx.request.body
+    let params = ctx.params
+    let id = params.id
 
     try {
-      result = await AdminRoleM.find().populate('resource').exec()
-      ctx.body = result
+      resData.resource_id = JSON.parse(resData.resource_id)
     } catch (err) {
-      console.log(err)
-      return Promise.reject({ status:400, code:1006, massage:err.message})      
+      return Promise.reject({
+        status: 200,
+        code: 2005,
+        message: 'resource_id must be array and can parse'
+      })
     }
+
+    try {
+      result = await AdminRoleM.findOneAndUpdate({
+        id
+      }, resData, {
+        new: true,
+        runValidators: true,
+      }).exec()
+
+    } catch (err) {
+      return Promise.reject({
+        status: 200,
+        code: 2001,
+        message: err.message
+      })
+    }
+
+    if (result) {
+      ctx.body = result
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
+    }
+  }
+
+  // 更新局部
+  async patch (ctx, next) {
+    let result
+    let resData = ctx.request.body
+    let params = ctx.params
+    let id = params.id
+
+    try {
+      resData.resource_id = JSON.parse(resData.resource_id)
+    } catch (err) {
+      return Promise.reject({
+        status: 200,
+        code: 2005,
+        message: 'resource_id must be string and can parse'
+      })
+    }
+
+    try {
+      result = await AdminRoleM.findOneAndUpdate({
+        id
+      }, resData, {
+        new: true,
+        runValidators: true,
+      }).exec()
+
+    } catch (err) {
+      return Promise.reject({
+        status: 200,
+        code: 2001,
+        message: err.message
+      })
+    }
+
+    if (result) {
+      ctx.body = result
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
+    }
+  }
+
+  // 获取所有
+  async getAll (ctx, next) {
+    let result
+    let type = query.type    
+    let value = query.value
+    let type = query.type
+
+    result = await AdminRoleM.find({
+      [type]: value
+    })
+      .sort(sortBy)
+      .populate({ 
+        path: 'resource',
+        select: 'id name',
+      })
+      .exec()    
+
+    ctx.body = result
+  }
+
+  // 获取部分
+  async get (ctx) {
+    let result
+    let total
+    let query = ctx.query
+    let start = query.start || 0
+    let count = query.count || 10
+    let type = query.type
+    let value = query.value
+    let sortBy = query.sortBy || 'sort'
+
+    start = parseInt(start)
+    count = parseInt(count)
+
+    if (Number.isNaN(start) || Number.isNaN(count)) {
+      return Promise.reject({
+        status: 400,
+        code: 2003,
+        message: 'start or count must be number'
+      })      
+    }
+
+    // type 有值的时候 value 也必须有值
+    if (type && !value) {
+      return Promise.reject({
+        status: 400,
+        code: 2004,
+        message: 'if type exist, value must be exist too'
+      })
+    }
+
+    result = AdminRoleM.find({
+      [type]: value,
+    })
+      .skip(start)
+      .limit(count)
+      .sort(sortBy)
+      .populate({ 
+        path: 'resource',
+        select: 'id name',
+      }).exec()
+
+    total = AdminRoleM.countDocuments({
+      [type]: value
+    })
+
+    total = await total
+    result = await  result
+
+    if (result && total) {
+      ctx.body = {
+        start,
+        count,
+        total,
+        list: result
+      }
+
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })      
+    }
+    
+  }
+
+  // 获取单个
+  async getOne (ctx) {
+    let result
+    let params = ctx.params
+    let id = params.id
+
+    result = await AdminRoleM.findOne({
+      id
+    })
+      .populate({ 
+        path: 'resource',
+        select: 'id name',
+      }).exec()
+
+    if (result) {
+      ctx.body = result
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
+    }
+    
+  }
+
+  // 获取单个角色的所有资源
+  async getOneAllResource (ctx) {
+    let result
+    let params = ctx.params
+    let id = params.id
+    let query = ctx.query
+    let type = query.type
+    let value = query.value
+    let sortBy = query.sortBy
+
+    // type 有值的时候 value 也必须有值
+    if (type && !value) {
+      return Promise.reject({
+        status: 400,
+        code: 2004,
+        message: 'if type exist, value must be exist too'
+      })
+    }
+
+    result = await AdminRoleM.findOne({
+      id
+    })
+      .populate({
+        path: 'resource',
+        match: { [type]: value },
+        options: {
+          sort: sortBy
+        }
+      })
+      .exec()
+
+    if (result) {
+      ctx.body = result.toObject().resource
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
+    }
+    
+  }
+
+  // 获取角色的部分资源
+  async getOneResource (ctx) {
+    let result
+    let total
+    let resource
+    let params = ctx.params
+    let id = params.id
+    let query = ctx.query
+    let start = query.start || 0
+    let count = query.count || 10
+    let type = query.type
+    let value = query.value
+    let sortBy = query.sortBy || 'sort'
+
+    start = parseInt(start)
+    count = parseInt(count)
+
+    if (Number.isNaN(start) || Number.isNaN(count)) {
+      return Promise.reject({
+        status: 400,
+        code: 2003,
+        message: 'start or count must be number'
+      })      
+    }
+
+    result = await AdminRoleM.findOne({
+      id
+    })
+      .populate({
+        path:'resource',
+        match: { [type]: value },
+        options: {
+          skip: start,
+          limit: count,
+          sort: sortBy
+        }
+      }).exec()
+
+    if (result) {
+      resource = result.toObject().resource
+
+      ctx.body = {
+        start,
+        count,
+        total: resource.length,
+        list: resource,
+      }
+    } else {
+      return Promise.reject({
+        status: 200,
+        code: 404,
+        message: 'not found'
+      })
+    }
+    
   }
 
 }

@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 12:00:07
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-30 14:53:56
+ * @LastEditTime: 2019-05-03 21:48:09
  */
 
 // 导入包
@@ -29,15 +29,25 @@ const AdminUserSchema = Schema(
       type: String,
       default: shortid.generate,
     },
-    name: String,  // 管理员昵称
-    avatar: String,  // 头像
-    username: String,  // 管理员帐号
+    name: {  // 管理员昵称
+      type: String,
+      required: true,
+    },
+    avatar: {  // 头像
+      type: String,
+      default: '',
+    },
+    username: {  // 管理员帐号
+      type: String,
+      required: true,
+    },
     password: {  // 密码
       type: String,
+      required: true,
       set(v) {
         // 赋值时进行加密存储
         return new md5().update(v + salt).digest('hex')
-      }
+      },
     },
     email: {  // 邮箱
       type: String,
@@ -45,6 +55,7 @@ const AdminUserSchema = Schema(
     },
     role_id: {  // 角色组ID
       type: String,
+      required:true,
     },
     is_active: {  // 是否启用
       type: Boolean,
@@ -59,7 +70,10 @@ const AdminUserSchema = Schema(
         type: String,
       },
     ],
-    ip_address: String,  // 登录ip
+    ip_address: {  // 登录ip
+      type: String,
+      default: ''
+    },
     login_time: {  // 登录时间
       type: Date,
       default: Date.now(),

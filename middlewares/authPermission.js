@@ -6,30 +6,38 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-25 16:01:36
- * @LastEditTime: 2019-04-30 16:19:51
+ * @LastEditTime: 2019-05-04 21:36:42
  */
 const { AdminRoleM } = require('../models/index')
 const { AdminResourceM } = require('../models/index')
 
 module.exports = async (ctx, next) => {
-  let id = ctx.role_id
+  let id = ctx.role_id  // jwt 验证通过后挂载的role_id
   let role
   let method
   let api
   let resource
   let hasPermission = false
 
-  try {
-    role = await AdminRoleM.findOne({id}).populate('resource').exec()
-  } catch (err) {
-    return Promise.reject({status: 401, code: '1001', message: 'no permissions'})
-  }
+  role = await AdminRoleM.findOne({
+    id
+  })
+    .populate('resource')
+    .exec()
 
   method = ctx.request.method.toLowerCase()  // http 方法转小写
   api = method + ctx.request.url.split('/').splice(0,3).join('/')  // 方法拼接请求的地址
 
   // 需要先在AdminRoleM 里设置toObject: {virtuals: true,}
-  resource = role.toObject().resource
+  resource = role.toObject().resource || []
+
+  if (resource.length === 0) {
+    return Promise.reject({
+      status: 200,
+      code: 403,
+      message: 'no permissions'
+    })
+  }
   
   // 遍历资源
   for (let i in resource) {
@@ -46,6 +54,10 @@ module.exports = async (ctx, next) => {
     await next()
   } else {
     // 没有抛出错误
-    return Promise.reject({status: 401, code: '1001', message: 'no permissions'})
+    return Promise.reject({
+      status: 403,
+      code: '1001',
+      message: 'no permissions'
+    })
   }
 }

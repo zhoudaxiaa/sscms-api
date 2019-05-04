@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 14:19:59
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-30 14:49:51
+ * @LastEditTime: 2019-05-03 21:50:53
  */
 
 // 导入包
@@ -24,14 +24,20 @@ const AdminRoleSchema = Schema(
       type: String,
       default: shortid.generate,
     },
-    name: String, // 角色组名
+    name: { // 角色组名
+      type: String,
+      required: true,
+    },
     resource_id: [
       // 资源组ID
       {
         type: String,
       },
     ],
-    introduce: String, // 介绍
+    introduce: { // 介绍
+      type: String,
+      default: '',
+    },
     publish_time: {  // 发布时期
       type: Date,
       default: Date.now(),

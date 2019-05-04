@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-05 16:49:11
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-30 14:53:58
+ * @LastEditTime: 2019-05-04 14:25:08
  */
 
 // 导入包
@@ -62,7 +62,14 @@ const ArticleSchema = Schema(
       type: Boolean,
       default: true,
     },
-    content_mkd: String, // 文章内容，markdown 格式
+    content_mkd: { // 文章内容，markdown 格式
+      type: String,
+      default: ''
+    },
+    content_word: { // 文章内容，传统word格式
+      type: String,
+      default: ''
+    },
     liked_num: {  // 文章被喜欢的次数
       type: Number,
       default: 0,
@@ -72,10 +79,6 @@ const ArticleSchema = Schema(
         type: String,
       },
     ],
-    comment_num: {  // 文章被评论的次数
-      type: Number,
-      default: 0,
-    },
     view_num: {  // 文章浏览量
       type: Number,
       default: 0,
@@ -128,23 +131,30 @@ exports.ArticleM = mongoose.model('ArticleM', ArticleSchema)
 ArticleSchema.virtual('author', {
   ref: 'AdminUserM',
   localField: 'author_id',
-  foreignField: 'id'
+  foreignField: 'id',
+  justOne: true,
 })
 
 ArticleSchema.virtual('category', {
   ref: 'CategoryM',
   localField: 'category_id',
-  foreignField: 'id'
+  foreignField: 'id',
+})
+
+ArticleSchema.virtual('column', {
+  ref: 'ColumnM',
+  localField: 'column_id',
+  foreignField: 'id',
 })
 
 ArticleSchema.virtual('comment', {
   ref: 'CommentM',
   localField: 'comment_id',
-  foreignField: 'id'
+  foreignField: 'id',
 })
 
 ArticleSchema.virtual('tag', {
   ref: 'TagM',
   localField: 'tag_id',
-  foreignField: 'id'
+  foreignField: 'id',
 })

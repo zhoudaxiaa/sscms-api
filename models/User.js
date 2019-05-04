@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-04 15:36:10
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:05:13
+ * @LastEditTime: 2019-05-04 14:15:46
  */
 
 // 导入包
@@ -103,4 +103,4 @@ const UserSchema = Schema(
 // 格式化日期输出
 UserSchema.path('register_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
-exports.UserM = mongoose.model('User', UserSchema)
+exports.UserM = mongoose.model('UserM', UserSchema)

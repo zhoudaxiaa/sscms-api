@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-28 10:27:33
- * @LastEditTime: 2019-04-28 12:24:33
+ * @LastEditTime: 2019-05-01 22:00:54
  */
 /**
  * @description: 响应错误抛出
@@ -17,14 +17,19 @@
  * @return: 
  */
 module.exports = async (ctx, next) => {
+
   try {
     await next()
   } catch (err) {
+
     ctx.status = err.status || 500
     ctx.body = { 
       code: err.code || 9999,
-      msg: err.message || 'unkown fail'
+      msg: err.message || 'unknown fail'
     }
+
+    // 继续向上监听错误事件
+    ctx.app.emit('error', err, ctx);
   }
 
 }

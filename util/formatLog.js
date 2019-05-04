@@ -1,6 +1,6 @@
 function formatRes(ctx, costTime) {
-  let { method, url, body, response } = ctx
-  return { method, url, body, costTime, response }
+  let { method, url, response } = ctx
+  return { method, url, costTime, response }
 }
 
 function formatError(ctx, err, costTime) {
