@@ -6,11 +6,13 @@
  * @Version: 1.0
  * @Date: 2018-11-14 09:38:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-01 23:12:34
+ * @LastEditTime: 2019-05-05 16:59:48
  */
 
 const Koa = require('koa')
+const path = require('path')
 const koaBody = require('koa-body')
+const static = require('koa-static')
 const onerror = require('koa-onerror')
 const cors = require('koa2-cors')
 const json = require('koa-json')
@@ -85,8 +87,17 @@ app.use(
 
 // post 数据处理中间件
 app.use(koaBody({
-  multipart: true
+  multipart: true,
+  formidable: {
+    // maxFileSize: 2*1024*1024
+  }
 }))
+
+// 配置静态资源
+const staticPath = './public'
+app.use(static(
+  path.join(__dirname, staticPath)
+))
 
 // 使用路由
 app.use(router.routes())

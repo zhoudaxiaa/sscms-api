@@ -6,11 +6,13 @@
  * @Version: 1.0
  * @Date: 2018-11-21 17:10:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-04 22:25:31
+ * @LastEditTime: 2019-05-05 15:23:29
  */
 
 const Router = require('koa-router')
+
 const {
+  CommonC,
   ArticleC,
   AdminUserC,
   AdminResourceC,
@@ -27,6 +29,12 @@ const router = new Router()
 
 // 处理错误并返回响应
 router.use(reqThrowError)
+
+/**
+ * 公共api
+ */
+// 单个文件上传
+router.post('/uploadfile', CommonC.uploadFile)
 
 /**
  * 管理员api
