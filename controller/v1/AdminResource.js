@@ -36,16 +36,20 @@ class AdminResource {
     let result
     let params = ctx.params
     let id = params.id
-    
-    result = await AdminResourceM.findOneAndDelete({
-      id
+    let ids
+
+    ids = id.split(',')
+
+    result = await AdminResourceM.remove({
+      id: ids
     })
       .exec()
 
-    if (result) {
+    if (result.n > 0) {
       ctx.body = {
-        id: result.id
+        id: ids
       }
+
     } else {
       return Promise.reject({
         status: 200,

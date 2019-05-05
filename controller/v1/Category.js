@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-28 20:34:42
- * @LastEditTime: 2019-05-04 21:16:03
+ * @LastEditTime: 2019-05-05 23:20:37
  */
 const { CategoryM } = require('../../models/index')
 
@@ -35,20 +35,24 @@ class Category {
     let result
     let params = ctx.params
     let id = params.id
-    
-    result = await CategoryM.findOneAndDelete({
-      id
+    let ids
+
+    ids = id.split(',')
+
+    result = await CategoryM.remove({
+      id: ids
     })
       .exec()
 
-    if (result) {
+    if (result.n > 0) {
       ctx.body = {
-        id: result.id
+        id: ids
       }
+
     } else {
       return Promise.reject({
         status: 200,
-        code: 2001,
+        code: 404,
         message: 'not found'
       })
     }

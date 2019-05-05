@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-10 13:35:44
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-04 21:48:06
+ * @LastEditTime: 2019-05-05 23:20:07
  */
 
 // 导入关Model
@@ -75,16 +75,20 @@ class Article {
     let result
     let params = ctx.params
     let id = params.id
-    
-    result = await ArticleM.findOneAndDelete({
-      id
+    let ids
+
+    ids = id.split(',')
+
+    result = await ArticleM.remove({
+      id: ids
     })
       .exec()
 
-    if (result) {
+    if (result.n > 0) {
       ctx.body = {
-        id: result.id
+        id: ids
       }
+
     } else {
       return Promise.reject({
         status: 200,

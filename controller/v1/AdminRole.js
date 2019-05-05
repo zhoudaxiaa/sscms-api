@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-30 12:39:56
- * @LastEditTime: 2019-05-04 23:21:00
+ * @LastEditTime: 2019-05-05 19:15:32
  */
 const { AdminRoleM } = require('../../models/index')
 
@@ -32,19 +32,22 @@ class AdminRole {
 
   }
 
-  // 删除
+  // 删除（可以是单个id，也可以是多个id，多个id用过 逗号隔开）
   async delete (ctx) {
     let result
     let params = ctx.params
     let id = params.id
+    let ids
 
-    result = await AdminRoleM.findOneAndDelete({
-      id
+    ids = id.split(',')
+
+    result = await AdminRoleM.remove({
+      id: ids
     }).exec()
 
-    if (result) {
+    if (result.n > 0) {
       ctx.body = {
-        id: result.id
+        id: ids
       }
 
     } else {
@@ -148,9 +151,19 @@ class AdminRole {
   // 获取所有
   async getAll (ctx, next) {
     let result
+    let query = ctx.query
     let type = query.type    
     let value = query.value
-    let type = query.type
+    let sortBy = query.sortBy || 'sort'
+    
+    // type 有值的时候 value 也必须有值
+    if (type && !value) {
+      return Promise.reject({
+        status: 400,
+        code: 2004,
+        message: 'if type exist, value must be exist too'
+      })
+    }
 
     result = await AdminRoleM.find({
       [type]: value

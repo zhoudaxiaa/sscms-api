@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-23 16:14:02
- * @LastEditTime: 2019-05-04 22:03:23
+ * @LastEditTime: 2019-05-05 22:39:15
  */
 const { AdminUserM } = require('../../models/index')
 const jwt = require('jsonwebtoken')
@@ -80,7 +80,7 @@ class AdminUser {
     } catch (err) {
       return Promise.reject({
         status: 200,
-        code: 1002,
+        code: 2001,
         message:err.message
       })
     }
@@ -97,15 +97,18 @@ class AdminUser {
     let result
     let params = ctx.params
     let id = params.id
+    let ids
 
-    result = await AdminUserM.findOneAndDelete({
-      id
+    ids = id.split(',')
+
+    result = await AdminUserM.remove({
+      id: ids
     })
       .exec()
 
-    if (result) {
+    if (result.n > 0) {
       ctx.body = {
-        id: result.id
+        id: ids
       }
 
     } else {
@@ -161,10 +164,16 @@ class AdminUser {
     let resData = ctx.request.body
     let params = ctx.params
     let id = params.id
+    let data = {}
+
+    // 密码为空时不更新
+    resData.password && (resData.password = resData.password.trim())
+    !resData.password && delete resData.password
+    console.log(resData)
 
     try {
       result = await AdminUserM.findOneAndUpdate({
-        i
+        id
       }, resData, {
         new: true,
         select: '-password',
