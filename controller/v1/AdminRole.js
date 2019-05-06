@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-30 12:39:56
- * @LastEditTime: 2019-05-05 19:15:32
+ * @LastEditTime: 2019-05-06 14:36:27
  */
 const { AdminRoleM } = require('../../models/index')
 
@@ -110,16 +110,6 @@ class AdminRole {
     let resData = ctx.request.body
     let params = ctx.params
     let id = params.id
-
-    try {
-      resData.resource_id = JSON.parse(resData.resource_id)
-    } catch (err) {
-      return Promise.reject({
-        status: 200,
-        code: 2005,
-        message: 'resource_id must be string and can parse'
-      })
-    }
 
     try {
       result = await AdminRoleM.findOneAndUpdate({
@@ -303,7 +293,7 @@ class AdminRole {
       .exec()
 
     if (result) {
-      ctx.body = result.toObject().resource
+      ctx.body = result.toObject().resource || []
     } else {
       return Promise.reject({
         status: 200,

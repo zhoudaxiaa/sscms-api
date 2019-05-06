@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-11-14 09:38:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-05 16:59:48
+ * @LastEditTime: 2019-05-06 13:01:38
  */
 
 const Koa = require('koa')
@@ -33,8 +33,9 @@ onerror(app, {
     return 'json'
   },
   json(err, ctx) {
+    ctx.status = ctx.status || 500
     ctx.body = {
-      code: 9999,
+      code: ctx.code || 9999,
       msg: err.message
     }
   }
@@ -89,7 +90,7 @@ app.use(
 app.use(koaBody({
   multipart: true,
   formidable: {
-    // maxFileSize: 2*1024*1024
+    maxFieldsSize: 2 * 1024 * 1024,  // 上传大小限制 2M
   }
 }))
 
