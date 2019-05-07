@@ -6,14 +6,14 @@
  * @Version: 1.0
  * @Date: 2018-12-10 13:35:44
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-05 23:20:07
+ * @LastEditTime: 2019-05-07 23:20:17
  */
 
 // 导入关Model
 const { ArticleM, CommentM } = require('../../models/index')
 const xss = require('xss')
 
-class Article {
+const ArticleC = {
 
   // 新增文章
   async add (ctx, next) {
@@ -68,7 +68,7 @@ class Article {
     }
     
     ctx.body = result
-  }
+  },
 
   // 删除
   async delete (ctx) {
@@ -97,7 +97,7 @@ class Article {
       })
     }
     
-  }
+  },
 
   // 更新全部
   async put (ctx, next) {
@@ -132,7 +132,7 @@ class Article {
         message: 'not found'
       })
     }
-  }
+  },
 
   // 更新局部
   async patch (ctx, next) {
@@ -167,7 +167,7 @@ class Article {
         message: 'not found'
       })
     }
-  }
+  },
 
   // 获取所有文章
   async getAll (ctx) {
@@ -201,7 +201,7 @@ class Article {
       .exec()
       
     ctx.body = result
-  }
+  },
 
   // 获取部分
   async get (ctx, next) {
@@ -279,7 +279,7 @@ class Article {
       list: result
     }
 
-  }
+  },
 
   // 获取单个
   async getOne (ctx, next) {
@@ -317,7 +317,7 @@ class Article {
         message: 'not found'
       })
     }
-  }
+  },
 
   // 获取单个的评论
   async getOneComment (ctx, next) {
@@ -347,7 +347,7 @@ class Article {
         message: 'not found'
       })
     }
-  }
+  },
 
   // 单个文章添加评论
   async addComment (ctx, next) {
@@ -386,8 +386,8 @@ class Article {
       })
     }
 
-  }
+  },
 
 }
 
-exports.ArticleC = new Article()
+exports.ArticleC = ArticleC

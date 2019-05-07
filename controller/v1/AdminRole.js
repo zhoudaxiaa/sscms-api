@@ -6,11 +6,11 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-30 12:39:56
- * @LastEditTime: 2019-05-06 14:36:27
+ * @LastEditTime: 2019-05-07 23:15:27
  */
 const { AdminRoleM } = require('../../models/index')
 
-class AdminRole {
+const AdminRoleC = {
 
   // 增加
   async add (ctx, next) {
@@ -30,7 +30,7 @@ class AdminRole {
 
     ctx.body = result
 
-  }
+  },
 
   // 删除（可以是单个id，也可以是多个id，多个id用过 逗号隔开）
   async delete (ctx) {
@@ -58,7 +58,7 @@ class AdminRole {
       })
     }
     
-  }
+  },
 
   // 更新全部
   async put (ctx, next) {
@@ -96,13 +96,18 @@ class AdminRole {
     if (result) {
       ctx.body = result
     } else {
+      /**
+       * @description: 
+       * @param {type} 
+       * @return: 
+       */
       return Promise.reject({
         status: 200,
         code: 404,
         message: 'not found'
       })
     }
-  }
+  },
 
   // 更新局部
   async patch (ctx, next) {
@@ -136,7 +141,7 @@ class AdminRole {
         message: 'not found'
       })
     }
-  }
+  },
 
   // 获取所有
   async getAll (ctx, next) {
@@ -166,7 +171,7 @@ class AdminRole {
       .exec()    
 
     ctx.body = result
-  }
+  },
 
   // 获取部分
   async get (ctx) {
@@ -233,7 +238,7 @@ class AdminRole {
       })      
     }
     
-  }
+  },
 
   // 获取单个
   async getOne (ctx) {
@@ -259,7 +264,7 @@ class AdminRole {
       })
     }
     
-  }
+  },
 
   // 获取单个角色的所有资源
   async getOneAllResource (ctx) {
@@ -302,7 +307,7 @@ class AdminRole {
       })
     }
     
-  }
+  },
 
   // 获取角色的部分资源
   async getOneResource (ctx) {
@@ -359,8 +364,8 @@ class AdminRole {
       })
     }
     
-  }
+  },
 
 }
 
-exports.AdminRoleC = new AdminRole()
+exports.AdminRoleC = AdminRoleC

@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-23 16:14:02
- * @LastEditTime: 2019-05-05 22:39:15
+ * @LastEditTime: 2019-05-07 23:20:58
  */
 const { AdminUserM } = require('../../models/index')
 const jwt = require('jsonwebtoken')
@@ -22,7 +22,7 @@ const getUserIp = (ctx) => {
     ctx.req.connection.socket.remoteAddress;
 }
 
-class AdminUser {
+const AdminUserC = {
 
   // 管理员登录
   async login (ctx, next) {
@@ -66,8 +66,7 @@ class AdminUser {
       })
     }
 
-
-  }
+  },
 
   // 添加
   async add (ctx, next) {
@@ -90,7 +89,7 @@ class AdminUser {
     
     ctx.body = result
     
-  }
+  },
 
   // 删除
   async delete (ctx) {
@@ -119,7 +118,7 @@ class AdminUser {
       })
     }
     
-  }
+  },
 
   // 更新全部
   async put (ctx) {
@@ -156,7 +155,7 @@ class AdminUser {
       })
     }
     
-  }
+  },
 
   // 更新局部
   async patch (ctx) {
@@ -199,7 +198,7 @@ class AdminUser {
       })
     }
     
-  }
+  },
 
   // 获得所有
   async getAll (ctx) {
@@ -223,7 +222,7 @@ class AdminUser {
 
     ctx.body = result
     
-  }
+  },
 
   // 获取部分
   async get (ctx) {
@@ -287,7 +286,7 @@ class AdminUser {
       list: result
     }
 
-  }
+  },
 
   // 获取单个用户
   async getOne (ctx) {
@@ -319,8 +318,8 @@ class AdminUser {
       })
     }
     
-  }
+  },
 
 }
 
-exports.AdminUserC = new AdminUser()
+exports.AdminUserC = AdminUserC

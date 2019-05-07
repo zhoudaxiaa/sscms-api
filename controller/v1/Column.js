@@ -2,16 +2,16 @@
  * @Author: zhoudaxiaa
  * @Github: https://
  * @Website: https://
- * @Description: 资源控制器
+ * @Description: 专栏控制器
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
- * @Date: 2019-04-26 14:15:13
- * @LastEditTime: 2019-05-07 23:21:33
+ * @Date: 2019-05-07 23:18:12
+ * @LastEditTime: 2019-05-07 23:19:22
  */
 
-const { AdminResourceM } = require('../../models/index')
+const { ColumnM } = require('../../models/index')
 
-const AdminResourceC = {
+const ColumnC = {
 
   // 添加
   async add (ctx, next) {
@@ -19,7 +19,7 @@ const AdminResourceC = {
     let resData = ctx.request.body
 
     try {
-      result = await AdminResourceM.create(resData)
+      result = await ColumnM.create(resData)
     } catch (err) {
       return Promise.reject({
         status: 200,
@@ -40,7 +40,7 @@ const AdminResourceC = {
 
     ids = id.split(',')
 
-    result = await AdminResourceM.remove({
+    result = await ColumnM.remove({
       id: ids
     })
       .exec()
@@ -68,7 +68,7 @@ const AdminResourceC = {
     let resData = ctx.request.body
 
     try {
-      result = await AdminResourceM.findOneAndUpdate({
+      result = await ColumnM.findOneAndUpdate({
         id
       }, resData, {
         new: true,
@@ -103,7 +103,7 @@ const AdminResourceC = {
     let resData = ctx.request.body
 
     try {
-      result = await AdminResourceM.findOneAndUpdate({
+      result = await ColumnM.findOneAndUpdate({
         id
       }, resData, {
         new: true,
@@ -124,8 +124,8 @@ const AdminResourceC = {
     } else {
       return Promise.reject({
         status: 200,
-        code: 404,
-        message:'not found'
+        code: 2001,
+        message: 'not found'
       })
     }
   },
@@ -133,30 +133,15 @@ const AdminResourceC = {
   // 获取全部
   async getAll (ctx, next) {
     let result
-    let query = ctx.query
-    let type = query.type
-    let value = query.value
-    let sortBy = query.sortBy || 'sort'
-    
-    // type 有值的时候 value 也必须有值
-    if (type && !value) {
-      return Promise.reject({
-        status: 400,
-        code: 2004,
-        message: 'if type exist, value must be exist too'
-      })
-    }
 
-    result = await AdminResourceM.find({
-      [type]: value
-    })
-      .sort(sortBy)
+    result = await ColumnM.find()
+      .sort('sort')
       .exec()
 
     ctx.body = result
   },
 
-  // 获取局部
+  // 获取部分
   async get (ctx, next) {
     let result
     let total
@@ -172,9 +157,9 @@ const AdminResourceC = {
 
     if (Number.isNaN(start) || Number.isNaN(count)) {
       return Promise.reject({
-        status: 400,
-        code: 2003,
-        message: 'start or count must be number'
+        status:400,
+        code:1006,
+        message:'start or count must be number'
       })      
     }
 
@@ -187,7 +172,7 @@ const AdminResourceC = {
       })
     }
 
-    result = AdminResourceM.find({
+    result = ColumnM.find({
       [type]: value
     })
       .skip(start)
@@ -195,7 +180,7 @@ const AdminResourceC = {
       .sort(sortBy)
       .exec()
 
-    total = AdminResourceM.countDocuments({
+    total = ColumnM.countDocuments({
       [type]: value
     })
 
@@ -217,7 +202,7 @@ const AdminResourceC = {
     let params = ctx.params
     let id = params.id
 
-    result = await AdminResourceM.findOne({
+    result = await ColumnM.findOne({
       id
     })
       .exec()
@@ -227,7 +212,7 @@ const AdminResourceC = {
     } else {
       return Promise.reject({
         status: 200,
-        code: 404,
+        code: 2001,
         message: 'not found'
       })
     }
@@ -235,4 +220,4 @@ const AdminResourceC = {
 
 }
 
-exports.AdminResourceC = AdminResourceC
+exports.ColumnC = ColumnC

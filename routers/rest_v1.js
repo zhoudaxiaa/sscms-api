@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-11-21 17:10:09
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-05 15:23:29
+ * @LastEditTime: 2019-05-07 23:25:04
  */
 
 const Router = require('koa-router')
@@ -18,6 +18,8 @@ const {
   AdminResourceC,
   CategoryC,
   AdminRoleC,
+  ColumnC,
+  TagC,
 } = require('../controller/index')('v1')
 
 const authToken = require('../middlewares/authToken')
@@ -31,13 +33,13 @@ const router = new Router()
 router.use(reqThrowError)
 
 /**
- * 公共api
+ * 公共路由
  */
 // 单个文件上传
 router.post('/uploadfile', CommonC.uploadFile)
 
 /**
- * 管理员api
+ * 管理员路由
  */
 // 登录
 router.post('/admin/login', AdminUserC.login)
@@ -65,7 +67,7 @@ router.get('/admin/:id', AdminUserC.getOne)
 
 
 /**
- * 文章api
+ * 文章路由
  */
 // 新增
 router.post('/article',  ArticleC.add)
@@ -96,7 +98,7 @@ router.post('/article/:id/comment', ArticleC.addComment)
 
 
 /**
- * 分类api
+ * 分类路由
  */
 // 添加
 router.post('/category', authToken, authPermission, CategoryC.add)
@@ -121,7 +123,7 @@ router.get('/category/:id', CategoryC.getOne)
 
 
 /** 
- * 角色api
+ * 角色路由
 */
 // 添加
 router.post('/role', AdminRoleC.add)
@@ -152,7 +154,7 @@ router.get('/role/:id/resource', AdminRoleC.getOneResource)
 
 
 /** 
- * 资源api
+ * 资源路由
 */
 // 添加
 router.post('/resource', AdminResourceC.add)
@@ -174,5 +176,53 @@ router.get('/resource', AdminResourceC.get)
 
 // 获取单个
 router.get('/resource/:id', AdminResourceC.getOne)
+
+/** 
+ * 专栏api
+*/
+// 添加
+router.post('/column', authToken, authPermission, ColumnC.add)
+
+// 删除
+router.delete('/column/:id', authToken, authPermission, ColumnC.delete)
+
+// 更新全部
+router.put('/column/:id', ColumnC.put)
+
+// 更新局部
+router.patch('/column/:id', ColumnC.patch)
+
+// 获取全部
+router.get('/column/all', ColumnC.getAll)
+
+// 获取部分
+router.get('/column', ColumnC.get)
+
+// 获取单个
+router.get('/column/:id', ColumnC.getOne)
+
+/** 
+ *标签路由
+*/
+// 添加
+router.post('/tag', authToken, authPermission, TagC.add)
+
+// 删除
+router.delete('/tag/:id', authToken, authPermission, TagC.delete)
+
+// 更新全部
+router.put('/tag/:id', TagC.put)
+
+// 更新局部
+router.patch('/tag/:id', TagC.patch)
+
+// 获取全部
+router.get('/tag/all', TagC.getAll)
+
+// 获取部分
+router.get('/tag', TagC.get)
+
+// 获取单个
+router.get('/tag/:id', TagC.getOne)
 
 module.exports = router
