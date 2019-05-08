@@ -90,7 +90,7 @@ app.use(
 app.use(koaBody({
   multipart: true,
   formidable: {
-    maxFieldsSize: 2 * 1024 * 1024,  // 上传大小限制 2M
+    maxFileSize: 20 * 1024 * 1024,  // 上传大小限制 2M
   }
 }))
 

@@ -58,7 +58,7 @@ function getUploadFileName(ext) {
 
 const Common = {
   async uploadFile (ctx, next) {
-// console.log(ctx.request.files)
+console.log(ctx.request.files)
 // console.log(ctx.request.files.file[0].path)
     try {
       const file = ctx.request.files.file  // 获取上传文件

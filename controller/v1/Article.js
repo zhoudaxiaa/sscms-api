@@ -27,35 +27,9 @@ const ArticleC = {
 
     mkd = resData.content_mkd
     word = resData.content_word
-    category_id = resData.category_id
-    tag_id = resData.tag_id
 
     mkd && (resData.content_mkd = xss(mkd))
     word && (resData.content_word = xss(word))
-    
-    if (category_id) {
-      try {
-        resData.category_id = JSON.parse(category_id)
-      } catch (err) {
-        return Promise.reject({
-          status: 400,
-          code: 2005,
-          message: 'category_id must be array string and can parse'
-        })
-      }
-    }
-
-    if (tag_id) {
-      try {
-        resData.tag_id = JSON.parse(tag_id)
-      } catch (err) {
-        return Promise.reject({
-          status: 400,
-          code: 2005,
-          message: 'tag_id must be array string and can parse'
-        })
-      }
-    }
 
     try {
       result = await ArticleM.create(resData)

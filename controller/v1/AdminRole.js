@@ -68,16 +68,6 @@ const AdminRoleC = {
     let id = params.id
 
     try {
-      resData.resource_id = JSON.parse(resData.resource_id)
-    } catch (err) {
-      return Promise.reject({
-        status: 200,
-        code: 2005,
-        message: 'resource_id must be array and can parse'
-      })
-    }
-
-    try {
       result = await AdminRoleM.findOneAndUpdate({
         id
       }, resData, {

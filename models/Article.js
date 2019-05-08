@@ -96,6 +96,10 @@ const ArticleSchema = Schema(
         type: String,
       },
     ],
+    introduce: {  // 内容简介
+      type: String,
+      default: ''
+    },
     publish_time: {
       type: Date,
       default: Date.now(), // 发布时间
