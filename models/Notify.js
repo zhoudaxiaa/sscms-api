@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 15:55:57
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:04:59
+ * @LastEditTime: 2019-06-07 16:36:34
  */
 
 // 导入包
@@ -28,14 +28,28 @@ const NotifySchema = Schema(
       type: Boolean,
       default: false,
     },
-    publish_time: Number, // 发送时间
+    publish_time: { // 发送时间
+      type: Date,
+      default: Date.now(),  // 更新时间
+      // 格式化时期输出
+      get: (v) => moment(v).format('YYYY-MM-DD HH:mm:ss')
+    }
   },
   {
-    // 防止表名变复数
+    strict: true,
+    toJSON: {
+      setters: true,
+      getters: true,
+      virtuals: false,
+    },
+    // 防止表名自动变复数
     collection: 'Notify',
+  },{
+    toObject: {
+      virtuals: true,
+    },
   },
+  
 )
-
-NotifySchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
 
 exports.NotifyM = mongoose.model('Notify', NotifySchema)

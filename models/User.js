@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-04 15:36:10
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-04 14:15:46
+ * @LastEditTime: 2019-06-07 16:35:37
  */
 
 // 导入包
@@ -16,11 +16,11 @@ const shortid = require('shortid')
 const moment = require('moment')
 
 // 导入关联表
-const Column = require('./Column')
-const Comment = require('./Comment')
-const Notify = require('./Notify')
-const Article = require('./Article')
-const Message = require('./Message')
+const ColumnM = require('./Column')
+const CommentM = require('./Comment')
+const NotifyM = require('./Notify')
+const ArticleM = require('./Article')
+const MessageM = require('./Message')
 
 const UserSchema = Schema(
   {
@@ -47,39 +47,29 @@ const UserSchema = Schema(
     github: String, // github 帐号
     email: String, // 邮箱
     phone_num: Number, // 手机号
-    follow_col_id: [
-      // 关注的专栏， 关联 Column 表
+    follow_col_id: [  // 关注的专栏， 关联 Column 表
       {
         type: String,
-        ref: 'Column',
       },
     ],
-    like_art_id: [
-      // 喜欢的文章， 关联 Article 表
+    like_art_id: [  // 喜欢的文章， 关联 Article 表
       {
         type: String,
-        ref: 'Article',
       },
     ],
-    comment_id: [
-      // 我的评论， 关联 Comment 表
+    comment_id: [  // 我的评论， 关联 Comment 表
       {
         type: String,
-        ref: 'Comment',
       },
     ],
-    message_id: [
-      // 我的消息， 关联 Message 表
+    message_id: [  // 我的消息， 关联 Message 表
       {
         type: String,
-        ref: 'Message',
       },
     ],
-    notify_id: [
-      // 系统通知， 关联 Notify 表
+    notify_id: [  // 系统通知， 关联 Notify 表
       {
         type: String,
-        ref: 'Notify',
       },
     ],
     is_column_msg: {
@@ -92,15 +82,58 @@ const UserSchema = Schema(
       type: Boolean,
       default: true,
     },
-    register_time: Number, // 注册时间
+    register_time: {  // 注册时间
+      type: Date,
+      default: Date.now(),  // 更新时间
+      // 格式化时期输出
+      get: (v) => moment(v).format('YYYY-MM-DD HH:mm:ss')
+    }
   },
   {
+    strict: true,
+    toJSON: {
+      setters: true,
+      getters: true,
+      virtuals: false,
+    },
     // 防止表名自动变复数
     collection: 'User',
+  },{
+    toObject: {
+      virtuals: true,
+    },
   },
+
 )
 
-// 格式化日期输出
-UserSchema.path('register_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
-
 exports.UserM = mongoose.model('UserM', UserSchema)
+
+UserSchema.virtual('follow_col', {
+  ref: 'ColumnM',
+  localField: 'follow_col_id',
+  foreignField: 'id',
+})
+
+UserSchema.virtual('like_art', {
+  ref: 'ArticleM',
+  localField: 'like_art_id',
+  foreignField: 'id',
+})
+
+UserSchema.virtual('comment', {
+  ref: 'CommentM',
+  localField: 'comment_id',
+  foreignField: 'id',
+})
+
+UserSchema.virtual('message', {
+  ref: 'MessageM',
+  localField: 'message_id',
+  foreignField: 'id',
+})
+
+UserSchema.virtual('notify', {
+  ref: 'NotifyM',
+  localField: 'notify_id',
+  foreignField: 'id',
+})

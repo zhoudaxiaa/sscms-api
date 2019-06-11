@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-25 16:01:36
- * @LastEditTime: 2019-05-04 21:36:42
+ * @LastEditTime: 2019-06-11 21:29:02
  */
 const { AdminRoleM } = require('../models/index')
 const { AdminResourceM } = require('../models/index')
@@ -42,8 +42,7 @@ module.exports = async (ctx, next) => {
   // 遍历资源
   for (let i in resource) {
     let resourceApi = resource[i].api  // 取得资源的api
-    console.log(resourceApi)
-    console.log(api)
+
     if (resourceApi === api) {  // 如有该资源的权限return
       hasPermission = true
       break

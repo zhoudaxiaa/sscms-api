@@ -6,13 +6,15 @@
  * @Version: 1.0
  * @Date: 2018-12-06 11:32:19
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-03 22:31:33
+ * @LastEditTime: 2019-06-09 17:35:15
  */
 
 // 导入包
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const shortid = require('shortid')
+
+const { ArticleM } = require('./Advertising')
 
 const CategorySchema = Schema(
   {
@@ -30,7 +32,6 @@ const CategorySchema = Schema(
     },
     url: {  // seo url
       type: String,
-      required: true,
     },
     pid: {
       type: String,
@@ -40,12 +41,6 @@ const CategorySchema = Schema(
       type: Number,
       default: 0,
     },
-    article_id: [
-      {
-        // 便签里的文章
-        type: String,
-      },
-    ],
     introduce: { // 分类说明
       type: String,
       default: '',
@@ -58,3 +53,10 @@ const CategorySchema = Schema(
 )
 
 exports.CategoryM = mongoose.model('CategoryM', CategorySchema)
+
+// 虚拟值填充
+CategorySchema.virtual('article', {
+  ref: 'ArticleM',
+  localField: 'id',
+  foreignField: 'category_id',
+})

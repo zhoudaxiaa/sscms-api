@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-05-05 15:10:31
- * @LastEditTime: 2019-05-06 13:58:24
+ * @LastEditTime: 2019-06-11 21:28:54
  */
 const shortid = require('shortid')
 const fs = require('fs')
@@ -58,8 +58,7 @@ function getUploadFileName(ext) {
 
 const Common = {
   async uploadFile (ctx, next) {
-console.log(ctx.request.files)
-// console.log(ctx.request.files.file[0].path)
+
     try {
       const file = ctx.request.files.file  // 获取上传文件
 
@@ -95,7 +94,7 @@ console.log(ctx.request.files)
       ctx.body = await pro
 
     } catch (err) {
-      // console.log(err)
+
       return Promise.reject({
         status: 200,
         code: 3001,

@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 10:34:07
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-04 14:37:25
+ * @LastEditTime: 2019-06-07 21:51:32
  */
 
 // 导入包
@@ -16,6 +16,7 @@ const shortid = require('shortid')
 const moment = require('moment')
 
 const UserM = require('./User')
+const ArticleM = require('./Article')
 
 const CommentSchema = Schema(
   {
@@ -69,5 +70,13 @@ CommentSchema.virtual('author', {
   ref: 'UserM',
   localField: 'author_id',
   foreignField: 'id',
+  justOne: true,
+})
+
+CommentSchema.virtual('article', {
+  ref: 'ArticleM',
+  localField: 'id',
+  foreignField: 'comment_id',
+  justOne: true,
 })
 

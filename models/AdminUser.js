@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 12:00:07
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-03 21:48:09
+ * @LastEditTime: 2019-06-08 10:42:34
  */
 
 // 导入包
@@ -77,8 +77,8 @@ const AdminUserSchema = Schema(
     login_time: {  // 登录时间
       type: Date,
       default: Date.now(),
-      // 输出时进行格式化
-      get: (v) => moment(v).format('YYYY-MM-DD HH:mm:ss')
+      // 格式化时期输出
+      get: v => moment(v).format('YYYY-MM-DD HH:mm:ss')
     },
   },
   {
@@ -92,6 +92,7 @@ const AdminUserSchema = Schema(
     collection: 'AdminUser',
   },{
     toObject: {
+      getters: true,
       virtuals: true,
     },
   }

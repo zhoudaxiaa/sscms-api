@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-10 13:35:44
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-07 23:20:17
+ * @LastEditTime: 2019-06-10 23:17:06
  */
 
 // 导入关Model
@@ -358,6 +358,197 @@ const ArticleC = {
         code: 404,
         message: 'not found'
       })
+    }
+
+  },
+
+  // 获取部分最新
+  async getNewest (ctx, next) {
+    let result
+    let total
+    let queryObj = {}
+    let query = ctx.query
+    let start = query.start || 0
+    let count = query.count || 10
+
+    // 默认只输出显示的文章
+    queryObj.is_show = true
+
+    // 是管理员的话就显示所有文章（去除查询条件）
+    ctx.isAdmin && delete queryObj.is_show
+
+    start = parseInt(start)
+    count = parseInt(count)
+
+    if (Number.isNaN(start) || Number.isNaN(count)) {
+      return Promise.reject({
+        status:400,
+        code:1006,
+        message:'start or count must be number'
+      })      
+    }
+
+    result = ArticleM.find(queryObj)
+      .skip(start)
+      .limit(count)
+      .sort('-publish_time')
+      .populate([{
+          path: 'author',
+          select: 'id name avatar',
+        },{
+          path: 'category',
+          select: 'id name url',
+        },{
+          path: 'column',
+          select: 'id name',
+        },{
+          path: 'comment',
+          select: 'id content'
+        },{
+          path: 'tag',
+          select: 'id name'
+        }
+      ])
+      .exec()
+
+    total = ArticleM.countDocuments(queryObj)
+
+    total = await total
+    result = await  result
+
+    ctx.body = {
+      start,
+      count,
+      total,
+      list: result
+    }
+
+  },
+
+  // 获取部分热门
+  async getHot (ctx, next) {
+    let result
+    let total
+    let queryObj = {}
+    let query = ctx.query
+    let start = query.start || 0
+    let count = query.count || 10
+
+    // 默认只输出显示的文章
+    queryObj.is_show = true
+
+    // 是管理员的话就显示所有文章（去除查询条件）
+    ctx.isAdmin && delete queryObj.is_show
+
+    start = parseInt(start)
+    count = parseInt(count)
+
+    if (Number.isNaN(start) || Number.isNaN(count)) {
+      return Promise.reject({
+        status:400,
+        code:1006,
+        message:'start or count must be number'
+      })      
+    }
+
+    result = ArticleM.find(queryObj)
+      .skip(start)
+      .limit(count)
+      .sort('-view_num')
+      .populate([{
+          path: 'author',
+          select: 'id name avatar',
+        },{
+          path: 'category',
+          select: 'id name url',
+        },{
+          path: 'column',
+          select: 'id name',
+        },{
+          path: 'comment',
+          select: 'id content'
+        },{
+          path: 'tag',
+          select: 'id name'
+        }
+      ])
+      .exec()
+
+    total = ArticleM.countDocuments(queryObj)
+
+    total = await total
+    result = await  result
+
+    ctx.body = {
+      start,
+      count,
+      total,
+      list: result
+    }
+
+  },
+
+  // 获取部分推荐
+  async getTop (ctx, next) {
+    let result
+    let total
+    let queryObj = {}
+    let query = ctx.query
+    let start = query.start || 0
+    let count = query.count || 10
+
+    // 默认只输出显示的文章
+    queryObj.is_show = true
+
+    // 是管理员的话就显示所有文章（去除查询条件）
+    ctx.isAdmin && delete queryObj.is_show
+
+    start = parseInt(start)
+    count = parseInt(count)
+
+    if (Number.isNaN(start) || Number.isNaN(count)) {
+      return Promise.reject({
+        status:400,
+        code:1006,
+        message:'start or count must be number'
+      })      
+    }
+
+    queryObj.is_top = true
+
+    result = ArticleM.find(queryObj)
+      .skip(start)
+      .limit(count)
+      .sort('-view_num')
+      .populate([{
+          path: 'author',
+          select: 'id name avatar',
+        },{
+          path: 'category',
+          select: 'id name url',
+        },{
+          path: 'column',
+          select: 'id name',
+        },{
+          path: 'comment',
+          select: 'id content'
+        },{
+          path: 'tag',
+          select: 'id name'
+        }
+      ])
+      .exec()
+
+    total = ArticleM.countDocuments(queryObj)
+
+    total = await total
+    result = await  result
+
+    ctx.body = {
+      start,
+      count,
+      total,
+      list: result
     }
 
   },

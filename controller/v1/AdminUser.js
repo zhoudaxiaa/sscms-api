@@ -6,11 +6,12 @@
  * @Version: 1.0
  * @LastEditors: zhoudaxiaa
  * @Date: 2019-04-23 16:14:02
- * @LastEditTime: 2019-05-07 23:20:58
+ * @LastEditTime: 2019-06-08 10:47:00
  */
 const { AdminUserM } = require('../../models/index')
 const jwt = require('jsonwebtoken')
 const md5 = require('md5.js')
+const moment = require('moment')
 
 const salt = 'm5NjIso1K'  // 密码加盐
 const secret = 'JhhmsD2NS'  // jwt secret
@@ -45,7 +46,7 @@ const AdminUserC = {
       login_time: new Date(),
       ip_address: getUserIp(ctx)
     })
-      .select('id name avatar role_id')
+      .select('id name avatar role_id ip_address login_time')
       .exec()
 
     if (result) {
@@ -53,11 +54,15 @@ const AdminUserC = {
         username: data.username,
         role_id: result.role_id
       }, secret, { expiresIn: '1d' })
+
+      // 转成对象后，model的login_time的get函数不起效，所以手动格式化时间
+      result = result.toObject()
+
+      result.login_time = moment(result.login_time).format('YYYY-MM-DD HH:mm:ss')
+
+      result.token = token
       
-      ctx.body = {
-        ...result.toObject(),  // query 返回的结果是一个复杂的对象，输出时都是隐式调用了toObject，这里使用扩展运算符，必须显示调用toObject
-        token
-      }
+      ctx.body = result
     } else {
       return Promise.reject({
         status: 200,
@@ -168,7 +173,6 @@ const AdminUserC = {
     // 密码为空时不更新
     resData.password && (resData.password = resData.password.trim())
     !resData.password && delete resData.password
-    console.log(resData)
 
     try {
       result = await AdminUserM.findOneAndUpdate({

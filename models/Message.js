@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-06 14:47:02
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-04-08 14:04:52
+ * @LastEditTime: 2019-06-07 16:37:44
  */
 
 // 导入包
@@ -47,14 +47,29 @@ const MessageSchema = Schema(
       type: Boolean,
       default: false,
     },
-    publish_time: Number, // 发送时间
+    publish_time: { // 发送时间
+      type: Date,
+      default: Date.now(),  // 更新时间
+      // 格式化时期输出
+      get: (v) => moment(v).format('YYYY-MM-DD HH:mm:ss')
+    },
+
   },
   {
-    // 防止表名变复数
+    strict: true,
+    toJSON: {
+      setters: true,
+      getters: true,
+      virtuals: false,
+    },
+    // 防止表名自动变复数
     collection: 'Message',
+  },{
+    toObject: {
+      virtuals: true,
+    },
   },
-)
 
-MessageSchema.path('publish_time').get(v => moment(v).format('YYYY-MM-DD HH:mm:ss'))
+)
 
 exports.MessageM = mongoose.model('Message', MessageSchema)

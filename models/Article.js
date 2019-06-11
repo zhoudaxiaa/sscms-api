@@ -6,7 +6,7 @@
  * @Version: 1.0
  * @Date: 2018-12-05 16:49:11
  * @LastEditors: zhoudaxiaa
- * @LastEditTime: 2019-05-04 14:25:08
+ * @LastEditTime: 2019-06-09 20:36:09
  */
 
 // 导入包
@@ -50,7 +50,7 @@ const ArticleSchema = Schema(
       type: Number,
       default: 0,
     },
-    image: {  // 文章图片
+    cover_img: {  // 文章图片
       type: String,
       default: '/upload/images/defaultAtrImg.png',
     },
