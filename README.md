@@ -3,6 +3,8 @@
 #### 项目介绍
 sscms 系统   restful api 服务端
 
+![Screenshot 2019-06-11 23.03.33.png](https://i.loli.net/2019/06/11/5cffc3507d84a64716.png)
+
 #### 软件架构
 软件架构说明
 
